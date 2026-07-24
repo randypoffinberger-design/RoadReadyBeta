@@ -1,0 +1,1478 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RoadReady Engine</title>
+<style>
+:root{--blue:#1f4e79;--gold:#f4c542;--light:#f4f7fb;--green:#1f8f4d;--red:#b3261e;--gray:#666}*{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;background:linear-gradient(180deg,#eaf2ff 0%,#fff 190px);color:#1f2933}header{background:var(--blue);color:white;padding:24px 16px;border-bottom:6px solid var(--gold);position:sticky;top:0;z-index:20;box-shadow:0 2px 10px rgba(0,0,0,.2)}.header-inner{max-width:950px;margin:0 auto;display:flex;gap:16px;align-items:center;justify-content:space-between;flex-wrap:wrap}h1{margin:0;font-size:1.5rem}.subhead{opacity:.95;margin-top:4px}.actions{display:flex;gap:10px;flex-wrap:wrap}button{border:0;padding:10px 14px;border-radius:8px;font-weight:700;cursor:pointer;font-size:1rem}.primary-btn,#gradeBtn{background:var(--gold);color:#111}.secondary-btn,#resetBtn,#statsTopBtn{background:white;color:var(--blue)}#reviewBtn{background:#e8f0fe;color:var(--blue);display:none}main{max-width:950px;margin:24px auto;padding:0 16px 40px}.hidden{display:none!important}.card{background:white;border:1px solid #d9e2ec;border-radius:14px;padding:18px;margin-bottom:16px;box-shadow:0 2px 8px rgba(0,0,0,.06)}.welcome{min-height:430px;display:flex;align-items:center;justify-content:center;text-align:center;position:relative;overflow:hidden}.welcome:before{content:"";position:absolute;inset:0;background:linear-gradient(rgba(255,255,255,.70),rgba(255,255,255,.90)),radial-gradient(circle at center, rgba(31,78,121,.20), transparent 55%);z-index:0}.welcome-content{position:relative;z-index:1;max-width:730px}.welcome h2{font-size:2.1rem;margin:.2rem 0}.big-icon{font-size:4rem;margin-bottom:.5rem}.welcome-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:18px}.blueprint-panel{margin:18px auto 4px;max-width:620px;text-align:left;background:rgba(255,255,255,.72);border:1px solid #d9e2ec;border-radius:12px;padding:12px}.blueprint-panel h3{margin:0 0 8px;text-align:center}.blueprint-list{columns:2;list-style:none;padding:0;margin:0}.blueprint-list li{padding:3px 0}@media(max-width:650px){.blueprint-list{columns:1}}.instructions{border-left:8px solid var(--blue)}.scorebox,.statsbox{display:none;font-size:1.1rem;border-left:8px solid var(--gold)}.question-meta{font-size:.88rem;color:var(--blue);font-weight:800;text-transform:uppercase;letter-spacing:.03em;margin-bottom:8px}.question-text{font-weight:800;font-size:1.08rem;line-height:1.35;margin-bottom:10px}.choice{display:block;border:1px solid #d9e2ec;background:var(--light);padding:12px;margin:8px 0;border-radius:10px;cursor:pointer;line-height:1.35}.choice:hover{background:#e8f0fe}.choice input{margin-right:10px;transform:scale(1.15)}.correct{border-color:var(--green)!important;background:#e8f7ee!important}.incorrect{border-color:var(--red)!important;background:#fdecea!important}.feedback{display:none;margin-top:10px;padding:12px;border-radius:10px;background:#fff8dc;border:1px solid #ead27c;line-height:1.35}.badge{display:inline-block;padding:3px 8px;border-radius:999px;font-size:.82rem;font-weight:800;margin-right:8px}.correct-b{background:#dff3e7;color:var(--green)}.incorrect-b{background:#fde1df;color:var(--red)}.progress{height:12px;background:#d9e2ec;border-radius:99px;overflow:hidden;margin-top:12px}.progress>div{height:100%;width:0;background:var(--gold);transition:width .25s ease}.tip{background:#fff8dc;border-left:8px solid var(--gold)}.summary-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:8px;margin-top:10px}.summary-item{background:#f4f7fb;border:1px solid #d9e2ec;border-radius:10px;padding:8px;font-size:.95rem}.beta-report-banner{border:2px solid var(--gold);background:#fff8dc;border-radius:12px;padding:14px;margin:12px 0}.beta-report-banner h3{margin-top:0}
+
+.mode-badge{position:fixed;right:14px;bottom:14px;z-index:9999;background:#fff;border:2px solid var(--blue);border-radius:12px;box-shadow:0 2px 10px rgba(0,0,0,.18);padding:10px;display:none;min-width:180px}
+.mode-badge b{display:block;margin-bottom:6px}
+.mode-badge button{margin:3px;padding:6px 8px;border:1px solid #d9e2ec;border-radius:8px;background:#f4f7fb;font-weight:700;cursor:pointer}
+.mode-badge button:hover{background:#eef3f8}
+.screen-nav{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0}.screen-nav button{margin-right:0}.mode-toast{position:fixed;right:14px;bottom:118px;z-index:10000;background:#1f2933;color:white;border-radius:10px;padding:10px 12px;box-shadow:0 2px 10px rgba(0,0,0,.25);display:none}
+.dev-tool-panel{border:1px solid #d9e2ec;border-radius:12px;padding:12px;margin:14px 0;background:#fff}
+.dev-search-row{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
+.dev-search-row input{flex:1;min-width:220px;padding:8px;border:1px solid #b8c4d4;border-radius:8px}
+.dev-results{max-height:300px;overflow:auto;border:1px solid #d9e2ec;border-radius:10px;padding:8px;background:#f9fbfd}
+.dev-result-item{padding:8px;border-bottom:1px solid #e3e8ef;cursor:pointer}
+.dev-result-item:hover{background:#eef3f8}
+.inspector-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}
+.inspector-card{background:#f4f7fb;border:1px solid #d9e2ec;border-radius:10px;padding:10px}
+.sim-good{color:var(--green);font-weight:800}.sim-warn{color:#b7791f;font-weight:800}.sim-bad{color:var(--red);font-weight:800}.grade-badge{font-size:1.4rem;font-weight:900}.category-health-ok{color:var(--green);font-weight:800}.category-health-warn{color:#b7791f;font-weight:800}.category-health-bad{color:var(--red);font-weight:800}.time-stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin:12px 0}.time-stat-card{background:#f4f7fb;border:1px solid #d9e2ec;border-radius:10px;padding:10px}.time-stat-card b{display:block;margin-bottom:4px}.beta-id-panel{background:#eef6ff;border:1px solid #b8d4f0;border-radius:12px;padding:12px;margin:14px 0}.beta-id-panel input{padding:8px;border:1px solid #b8c4d4;border-radius:8px;min-width:220px}.beta-id-warning{background:#fff8dc;border:1px solid #ead27c;border-radius:12px;padding:12px;margin:14px 0}
+.validation-warning{border:2px solid var(--red);background:#fff0f0;border-radius:12px;padding:12px;margin:12px 0}.validation-warning h3{margin-top:0;color:var(--red)}.validation-ok{border:2px solid var(--green);background:#f1fff5;border-radius:12px;padding:12px;margin:12px 0}.validation-ok h3{margin-top:0;color:var(--green)}.dev-panel{display:none;border-left:8px solid #555;background:#fbfbfb}.dev-table{width:100%;border-collapse:collapse;margin-top:8px}.dev-table th,.dev-table td{border:1px solid #d9e2ec;padding:6px;text-align:left}.dev-table th{background:#eef3f8}.dev-ok{color:var(--green);font-weight:800}.dev-warn{color:var(--red);font-weight:800}.dev-small{font-size:.9rem;color:#555}.dev-code{font-family:Consolas,monospace;background:#f4f7fb;padding:2px 4px;border-radius:4px}.danger-zone{margin-top:22px;padding:14px;border:1px solid var(--red);border-radius:12px;background:#fff5f5}.danger-zone button{background:#fdecea;color:var(--red)}.reset-confirm{margin-top:12px;display:none}.reset-confirm input{padding:10px;border:1px solid #ccc;border-radius:8px;width:180px}footer{text-align:center;color:var(--gray);padding:20px}
+</style></head><body>
+<header id="appHeader" class="hidden"><div class="header-inner"><div><h1 id="pageTitle"></h1><div class="subhead" id="pageSubtitle"></div></div><div class="actions"><button id="gradeBtn" onclick="gradeTest()">Grade Test</button><button id="resetBtn" onclick="startTest()">New Random Test</button><button id="reviewBtn" onclick="reviewIncorrect()">Review Incorrect Only</button><button id="statsTopBtn" onclick="showStatsScreen()">Statistics</button><button id="devTopBtn" onclick="showDeveloperDashboard()">Developer</button></div></div></header>
+<main>
+<section class="card welcome" id="homeScreen"><div class="welcome-content"><div class="big-icon" id="homeIcon"></div><h2 id="homeTitle"></h2><p id="homeSubtitle"></p><p id="homeVersion"></p><div class="welcome-actions" id="homeActions"><button class="primary-btn" onclick="startTest()">Start Practice Test</button><button class="secondary-btn" onclick="showStatsScreen()">View Statistics</button></div></div></section>
+<section class="card statsbox" id="statsScreen"></section>
+<section class="card statsbox dev-panel" id="developerScreen"></section>
+<div id="testScreen" class="hidden"><section class="card instructions"><h2>Instructions</h2><p id="betaNotice"></p><p>Choose the ONE best answer for each question. When finished, press <b>Grade Test</b>.</p><p id="passingTarget"></p><div class="progress"><div id="progressFill"></div></div><p id="answeredCount">Answered: 0 / 25</p></section><section class="card scorebox" id="scoreBox"></section><section class="card tip" id="topTip"></section><div id="questionContainer"></div></div>
+</main><footer id="footerText"></footer>
+<!-- ============================================================
+     ROADREADY MODULE ATTACHMENT
+
+     To swap products later, change only this module path.
+     Examples:
+       modules/wv_driver_module.js
+       modules/wv_motorcycle_module.js
+       modules/md_driver_module.js
+     ============================================================ -->
+<script src="modules/wv_driver_module.js"></script>
+<script>
+const APP_MODE="beta"; // options: "developer", "beta", "public"
+let ACTIVE_APP_MODE = localStorage.getItem("roadready_active_app_mode") || APP_MODE;
+const ENGINE_VERSION="1.6.3 Developer";
+const MODULE=window.ROADREADY_MODULE;if(!MODULE){alert("RoadReady module not found. Check the module script path.")}const TEST_CONFIG=MODULE.testConfig,THEME_CONFIG=MODULE.themeConfig,EXAM_BLUEPRINT=MODULE.examBlueprint,QUESTION_BANK=MODULE.questionBank;
+const BETA_CONFIG = MODULE.betaConfig || { feedbackAfterTests: 5, remindEvery: 5, surveyVersion: "1.0" };
+let currentQuestions=[],missedQuestions=new Set();
+function getStorageKey(){return TEST_CONFIG.storageKey||("roadready_"+TEST_CONFIG.state+"_"+TEST_CONFIG.licenseType+"_progress").replace(/\s+/g,"_").toLowerCase()}
+function getTesterId(){
+  const key = getStorageKey() + "_tester_id";
+  let id = localStorage.getItem(key);
+  if(!id){
+    id = "RR-" + Math.random().toString(36).slice(2,6).toUpperCase() + "-" + Date.now().toString().slice(-4);
+    localStorage.setItem(key, id);
+  }
+  return id;
+}
+
+
+/* ============================================================
+   RoadReady Beta Tester ID v1.6.1
+   ============================================================ */
+function getBetaIdStorageKey(){
+  return "roadready_beta_id";
+}
+
+function getBetaId(){
+  return localStorage.getItem(getBetaIdStorageKey()) || "";
+}
+
+function setBetaId(value){
+  const clean=(value||"").trim().toUpperCase();
+  if(clean)localStorage.setItem(getBetaIdStorageKey(), clean);
+  return clean;
+}
+
+function clearBetaId(){
+  localStorage.removeItem(getBetaIdStorageKey());
+  showModeToast("Beta ID cleared");
+  showHome();
+}
+
+function isValidBetaId(value){
+  return /^[A-Z0-9][A-Z0-9\-_.]{2,40}$/.test((value||"").trim().toUpperCase());
+}
+
+function requireBetaIdIfNeeded(){
+  if(ACTIVE_APP_MODE!=="beta") return true;
+  const id=getBetaId();
+  if(id && isValidBetaId(id)) return true;
+  showBetaIdPrompt();
+  return false;
+}
+
+function showBetaIdPrompt(){
+  appHeader.classList.add("hidden");
+  homeScreen.classList.add("hidden");
+  testScreen.classList.add("hidden");
+  statsScreen.style.display="none";
+  developerScreen.style.display="none";
+  const old=document.getElementById("betaIdScreen");
+  if(old)old.remove();
+
+  const box=document.createElement("div");
+  box.className="screen";
+  box.id="betaIdScreen";
+  box.innerHTML="<div class='card'><h2>RoadReady Beta ID</h2>"+
+    "<p>Please enter the Beta ID assigned by the RoadReady project owner.</p>"+
+    "<p><input id='betaIdInput' placeholder='Example: WV-BETA-001' autocomplete='off'> "+
+    "<button class='primary-btn' onclick='saveBetaIdFromPrompt()'>Save Beta ID</button></p>"+
+    "<div class='beta-id-warning'><b>Why this matters:</b> Your Beta ID lets the project owner match your feedback report to your beta test record without using your name inside the report.</div>"+
+    "<p><button class='secondary-btn' onclick='document.getElementById(\"betaIdScreen\")?.remove();showHome()'>Back to Home</button></p></div>";
+  document.body.appendChild(box);
+  setTimeout(()=>document.getElementById("betaIdInput")?.focus(),0);
+}
+
+function saveBetaIdFromPrompt(){
+  const input=document.getElementById("betaIdInput");
+  const val=(input?.value||"").trim().toUpperCase();
+  if(!isValidBetaId(val)){
+    alert("Please enter a valid Beta ID, such as WV-BETA-001.");
+    return;
+  }
+  setBetaId(val);
+  document.getElementById("betaIdScreen")?.remove();
+  showModeToast("Beta ID saved: "+val);
+  showHome();
+}
+
+function renderBetaIdBlock(){
+  const id=getBetaId();
+  if(ACTIVE_APP_MODE==="public") return "";
+  if(ACTIVE_APP_MODE==="beta"){
+    if(!id){
+      return "<div class='beta-id-panel'><b>Beta ID:</b> Not set<br><button class='secondary-btn' onclick='showBetaIdPrompt()'>Enter Beta ID</button></div>";
+    }
+    return "<div class='beta-id-panel'><b>Beta ID:</b> <span class='dev-code'>"+escapeHtml(id)+"</span></div>";
+  }
+  if(ACTIVE_APP_MODE==="developer"){
+    return "<div class='beta-id-panel'><b>Beta ID:</b> "+(id?"<span class='dev-code'>"+escapeHtml(id)+"</span>":"Not set")+"<br>"+
+      "<button class='secondary-btn' onclick='showBetaIdPrompt()'>Set / Change Beta ID</button> "+
+      "<button class='secondary-btn' onclick='clearBetaId()'>Clear Beta ID</button></div>";
+  }
+  return "";
+}
+function shouldPromptBetaReport(progress){
+  if(ACTIVE_APP_MODE!=="beta" && ACTIVE_APP_MODE!=="developer") return false;
+  if(!BETA_CONFIG || !BETA_CONFIG.feedbackAfterTests) return false;
+  if(progress.totalTests < BETA_CONFIG.feedbackAfterTests) return false;
+
+  // First eligible prompt.
+  if(!progress.betaReportGenerated && !progress.lastBetaReminderTest) return true;
+
+  // Remind only at configured milestones, e.g. 5, 10, 15.
+  const interval = BETA_CONFIG.remindEvery || BETA_CONFIG.feedbackAfterTests;
+  if(progress.totalTests % interval !== 0) return false;
+
+  // Do not show more than once for the same test count.
+  if(progress.lastBetaReminderTest === progress.totalTests) return false;
+
+  return true;
+}
+
+function markBetaReminderShown(){
+  const p = loadProgress();
+  p.lastBetaReminderTest = p.totalTests;
+  saveProgress(p);
+}
+
+function getEmptyProgress(){return{totalTests:0,passedTests:0,failedTests:0,totalQuestionsAnswered:0,totalCorrectAnswers:0,bestScore:0,lastScore:null,lastPercent:null,lastResult:null,categoryStats:{},questionStats:{},attemptHistory:[],totalUnanswered:0,currentPassStreak:0,longestPassStreak:0,perfectTests:0,betaReportGenerated:false,betaReportGeneratedAt:null,lastBetaReminderTest:0,testerId:null}}function loadProgress(){try{const s=localStorage.getItem(getStorageKey());let p=s?JSON.parse(s):getEmptyProgress();if(!p.testerId)p.testerId=getTesterId();return p}catch(e){let p=getEmptyProgress();p.testerId=getTesterId();return p}}function saveProgress(p){localStorage.setItem(getStorageKey(),JSON.stringify(p))}function shuffle(a){const c=[...a];for(let i=c.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[c[i],c[j]]=[c[j],c[i]]}return c}function escapeHtml(t){return String(t).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
+
+function showModeToast(message){
+  const toast=document.getElementById("modeToast");
+  if(!toast)return;
+  toast.textContent=message;
+  toast.style.display="block";
+  clearTimeout(window.__roadreadyModeToastTimer);
+  window.__roadreadyModeToastTimer=setTimeout(()=>{toast.style.display="none";},1800);
+}
+
+function updateModeBadge(){
+  const badge=document.getElementById("modeBadge");
+  const text=document.getElementById("modeBadgeText");
+  if(text)text.textContent=ACTIVE_APP_MODE;
+  if(badge)badge.style.display=(ACTIVE_APP_MODE==="developer")?"block":"none";
+}
+
+function setActiveAppMode(mode){
+  if(!["developer","beta","public"].includes(mode)) return;
+  ACTIVE_APP_MODE = mode;
+  localStorage.setItem("roadready_active_app_mode", mode);
+  applyModule();
+  updateModeBadge();
+  showHome();
+  showModeToast("RoadReady mode: " + mode);
+}
+
+function cycleActiveAppMode(){
+  const modes=["developer","beta","public"];
+  const currentIndex=modes.indexOf(ACTIVE_APP_MODE);
+  const next=modes[(currentIndex+1)%modes.length];
+  setActiveAppMode(next);
+}
+
+document.addEventListener("keydown", function(e){
+  // F8 cycles Developer -> Beta -> Public.
+  if(e.key==="F8"){
+    e.preventDefault();
+    cycleActiveAppMode();
+  }
+  // Ctrl + Alt + 1/2/3 jump directly.
+  if(e.ctrlKey && e.altKey && e.key==="1"){e.preventDefault();setActiveAppMode("developer");}
+  if(e.ctrlKey && e.altKey && e.key==="2"){e.preventDefault();setActiveAppMode("beta");}
+  if(e.ctrlKey && e.altKey && e.key==="3"){e.preventDefault();setActiveAppMode("public");}
+});
+
+
+/* ============================================================
+   RoadReady Navigation / Test Manager v1.3.1
+   ============================================================ */
+
+/* ============================================================
+   RoadReady Time Statistics v1.6
+   Tracks active test time, average test time, question time,
+   correct/incorrect timing, and total study time.
+   ============================================================ */
+let currentTestStartMs = null;
+let currentQuestionStartMs = null;
+let currentTestActiveSeconds = 0;
+let currentQuestionActiveSeconds = 0;
+let currentTestAnsweredCount = 0;
+let currentTestCorrectSeconds = 0;
+let currentTestWrongSeconds = 0;
+let currentTestCorrectCount = 0;
+let currentTestWrongCount = 0;
+let timeTicker = null;
+let lastTickMs = null;
+
+function ensureTimeStats(p){
+  if(!p.timeStats){
+    p.timeStats = {
+      totalStudySeconds:0,
+      totalCompletedTests:0,
+      fastestTestSeconds:null,
+      longestTestSeconds:0,
+      totalQuestionsAnswered:0,
+      totalQuestionSeconds:0,
+      totalCorrectAnswerSeconds:0,
+      totalCorrectTimedAnswers:0,
+      totalWrongAnswerSeconds:0,
+      totalWrongTimedAnswers:0
+    };
+  }
+  return p;
+}
+
+function formatDuration(seconds){
+  seconds = Math.max(0, Math.round(Number(seconds)||0));
+  const h=Math.floor(seconds/3600);
+  const m=Math.floor((seconds%3600)/60);
+  const s=seconds%60;
+  if(h>0)return h+"h "+m+"m";
+  if(m>0)return m+"m "+s+"s";
+  return s+"s";
+}
+
+function beginTestTimer(){
+  stopTimeTicker();
+  currentTestStartMs = Date.now();
+  currentQuestionStartMs = Date.now();
+  currentTestActiveSeconds = 0;
+  currentQuestionActiveSeconds = 0;
+  currentTestAnsweredCount = 0;
+  currentTestCorrectSeconds = 0;
+  currentTestWrongSeconds = 0;
+  currentTestCorrectCount = 0;
+  currentTestWrongCount = 0;
+  lastTickMs = Date.now();
+  timeTicker = setInterval(tickActiveTime,1000);
+}
+
+function stopTimeTicker(){
+  if(timeTicker){
+    clearInterval(timeTicker);
+    timeTicker=null;
+  }
+  lastTickMs=null;
+}
+
+function tickActiveTime(){
+  if(document.hidden) {
+    lastTickMs=Date.now();
+    return;
+  }
+  if(!currentTestStartMs || testScreen.classList.contains("hidden")){
+    lastTickMs=Date.now();
+    return;
+  }
+  const now=Date.now();
+  const delta=Math.min(5, Math.max(0, (now-(lastTickMs||now))/1000));
+  currentTestActiveSeconds += delta;
+  currentQuestionActiveSeconds += delta;
+  lastTickMs=now;
+}
+
+document.addEventListener("visibilitychange", function(){
+  lastTickMs=Date.now();
+});
+
+function recordQuestionTiming(isCorrect){
+  if(!currentTestStartMs)return;
+  const seconds=Math.max(0, Math.round(currentQuestionActiveSeconds||0));
+  currentTestAnsweredCount++;
+  if(isCorrect){
+    currentTestCorrectSeconds += seconds;
+    currentTestCorrectCount++;
+  }else{
+    currentTestWrongSeconds += seconds;
+    currentTestWrongCount++;
+  }
+  currentQuestionActiveSeconds=0;
+  currentQuestionStartMs=Date.now();
+}
+
+function finalizeTestTiming(correctCount, wrongCount, unansweredCount){
+  if(!currentTestStartMs)return;
+  tickActiveTime();
+  const p=ensureTimeStats(loadProgress());
+  const ts=p.timeStats;
+  const testSeconds=Math.max(1, Math.round(currentTestActiveSeconds||0));
+  ts.totalStudySeconds = (ts.totalStudySeconds||0)+testSeconds;
+  ts.totalCompletedTests = (ts.totalCompletedTests||0)+1;
+  ts.fastestTestSeconds = ts.fastestTestSeconds==null ? testSeconds : Math.min(ts.fastestTestSeconds, testSeconds);
+  ts.longestTestSeconds = Math.max(ts.longestTestSeconds||0, testSeconds);
+  ts.totalQuestionsAnswered = (ts.totalQuestionsAnswered||0)+(currentTestAnsweredCount||0);
+  ts.totalQuestionSeconds = (ts.totalQuestionSeconds||0)+Math.round((currentTestCorrectSeconds||0)+(currentTestWrongSeconds||0));
+  ts.totalCorrectAnswerSeconds = (ts.totalCorrectAnswerSeconds||0)+Math.round(currentTestCorrectSeconds||0);
+  ts.totalCorrectTimedAnswers = (ts.totalCorrectTimedAnswers||0)+(currentTestCorrectCount||0);
+  ts.totalWrongAnswerSeconds = (ts.totalWrongAnswerSeconds||0)+Math.round(currentTestWrongSeconds||0);
+  ts.totalWrongTimedAnswers = (ts.totalWrongTimedAnswers||0)+(currentTestWrongCount||0);
+  saveProgress(p);
+  stopTimeTicker();
+  currentTestStartMs=null;
+  currentQuestionStartMs=null;
+}
+
+function renderTimeStatsBlock(p){
+  p=ensureTimeStats(p);
+  const ts=p.timeStats||{};
+  const completed=ts.totalCompletedTests||0;
+  const totalStudy=ts.totalStudySeconds||0;
+  const avgTest=completed?totalStudy/completed:0;
+  const avgQuestion=(ts.totalQuestionsAnswered||0)?(ts.totalQuestionSeconds||0)/(ts.totalQuestionsAnswered||0):0;
+  const avgCorrect=(ts.totalCorrectTimedAnswers||0)?(ts.totalCorrectAnswerSeconds||0)/(ts.totalCorrectTimedAnswers||0):0;
+  const avgWrong=(ts.totalWrongTimedAnswers||0)?(ts.totalWrongAnswerSeconds||0)/(ts.totalWrongTimedAnswers||0):0;
+  return "<h3>Time Statistics</h3><div class='time-stat-grid'>"+
+    "<div class='time-stat-card'><b>Total Study Time</b>"+formatDuration(totalStudy)+"</div>"+
+    "<div class='time-stat-card'><b>Average Test Time</b>"+formatDuration(avgTest)+"</div>"+
+    "<div class='time-stat-card'><b>Fastest Completed Test</b>"+(ts.fastestTestSeconds==null?"—":formatDuration(ts.fastestTestSeconds))+"</div>"+
+    "<div class='time-stat-card'><b>Longest Completed Test</b>"+formatDuration(ts.longestTestSeconds||0)+"</div>"+
+    "<div class='time-stat-card'><b>Average Time / Question</b>"+formatDuration(avgQuestion)+"</div>"+
+    "<div class='time-stat-card'><b>Timed Questions Answered</b>"+(ts.totalQuestionsAnswered||0)+"</div>"+
+    "<div class='time-stat-card'><b>Avg Time on Correct Answers</b>"+formatDuration(avgCorrect)+"</div>"+
+    "<div class='time-stat-card'><b>Avg Time on Wrong Answers</b>"+formatDuration(avgWrong)+"</div>"+
+  "</div>";
+}
+const RoadReadyNav = {
+  lastTestScrollY: 0,
+
+  rememberTestPosition(){
+    try{
+      if(typeof testScreen !== "undefined" && !testScreen.classList.contains("hidden")){
+        this.lastTestScrollY = window.scrollY || 0;
+      }
+    }catch(e){}
+  },
+
+  startNewTest(){
+    try{
+      if(!requireBetaIdIfNeeded()) return;
+      buildQuestionSet();
+      renderQuestions();
+      updateProgress();
+      showTestScreen();
+      beginTestTimer();
+      window.scrollTo(0,0);
+    }catch(err){
+      console.error("RoadReady startNewTest failed:", err);
+      alert("RoadReady could not start the test. Error: " + err.message);
+    }
+  },
+
+  resumeTest(){
+    if(!hasActiveTest()){
+      showHome();
+      return;
+    }
+    showTestScreen();
+    setTimeout(()=>window.scrollTo(0, this.lastTestScrollY || 0),0);
+  }
+};
+
+function showTestScreen(){
+  appHeader.classList.remove("hidden");
+  homeScreen.classList.add("hidden");
+  testScreen.classList.remove("hidden");
+  statsScreen.style.display = "none";
+  developerScreen.style.display = "none";
+  if(typeof updateModeBadge==="function") updateModeBadge();
+}
+
+function startTest(){
+  RoadReadyNav.startNewTest();
+}
+
+function applyModule(){document.documentElement.style.setProperty("--blue",THEME_CONFIG.accentColor||"#1f4e79");document.documentElement.style.setProperty("--gold",THEME_CONFIG.secondaryColor||"#f4c542");document.title=TEST_CONFIG.title;pageTitle.textContent=TEST_CONFIG.title;pageSubtitle.textContent=TEST_CONFIG.subtitle;homeIcon.textContent=THEME_CONFIG.icon||"🚗";homeTitle.textContent=THEME_CONFIG.homeTitle||TEST_CONFIG.title;homeSubtitle.textContent=(typeof getModeAwareHomeSubtitle==="function"?getModeAwareHomeSubtitle():(THEME_CONFIG.homeSubtitle||""));homeVersion.innerHTML="<b>"+TEST_CONFIG.version+"</b><br>Passing target: "+TEST_CONFIG.passingScore+" / "+TEST_CONFIG.totalQuestions;betaNotice.innerHTML="<b>"+TEST_CONFIG.version+":</b> "+TEST_CONFIG.betaNotice;passingTarget.innerHTML="<b>Passing target:</b> "+TEST_CONFIG.passingScore+" out of "+TEST_CONFIG.totalQuestions+" or better.";topTip.innerHTML=THEME_CONFIG.topTip||"";footerText.innerHTML="<strong>"+TEST_CONFIG.version+"</strong><br>"+TEST_CONFIG.disclaimer;if(ACTIVE_APP_MODE!=="developer"&&document.getElementById("devTopBtn")){devTopBtn.classList.add("hidden")}else if(document.getElementById("devTopBtn")){devTopBtn.classList.remove("hidden")}if(ACTIVE_APP_MODE==="public"){betaNotice.innerHTML="";footerText.innerHTML=TEST_CONFIG.disclaimer}}
+
+function hasActiveTest(){
+  return Array.isArray(currentQuestions) && currentQuestions.length > 0;
+}
+
+function showCurrentTest(){
+  RoadReadyNav.resumeTest();
+}
+
+function renderContextNav(location){
+  let htmlNav="<div class='screen-nav'>";
+  htmlNav+="<button class='secondary-btn' onclick='showHome()'>Home</button>";
+  if(hasActiveTest()){
+    htmlNav+="<button class='primary-btn' onclick='showCurrentTest()'>Return to Current Test</button>";
+  }
+  htmlNav+="<button class='secondary-btn' onclick='startTest()'>New Random Test</button>";
+  if(ACTIVE_APP_MODE==="developer"){
+    htmlNav+="<button class='secondary-btn' onclick='showDeveloperDashboard()'>Developer Dashboard</button>";
+  }
+  htmlNav+="</div>";
+  return htmlNav;
+}
+
+function getModeAwareHomeSubtitle(){
+  if(ACTIVE_APP_MODE==="public"){
+    return "Study with randomized practice tests based on the West Virginia Driver's Handbook, with instant grading, explanations, and progress statistics.";
+  }
+  if(ACTIVE_APP_MODE==="beta"){
+    return "Help improve RoadReady by using the app normally. Beta feedback reports are available after several completed tests.";
+  }
+  return "RoadReady Engine Developer Build. Module testing, validation, simulation, diagnostics, statistics, and beta reporting are enabled.";
+}
+function showHome(){
+  if(typeof RoadReadyNav !== "undefined") RoadReadyNav.rememberTestPosition();
+
+  appHeader.classList.add("hidden");
+  homeScreen.classList.remove("hidden");
+  testScreen.classList.add("hidden");
+  statsScreen.style.display="none";
+  developerScreen.style.display="none";
+
+  const publicSubtitle = "Study with randomized practice tests based on the West Virginia Driver's Handbook, with instant grading, explanations, and progress statistics.";
+  const betaSubtitle = "Help improve RoadReady by using the app normally. Beta feedback reports are available after several completed tests.";
+  const developerSubtitle = "RoadReady Engine Developer Build. Module testing, validation, simulation, diagnostics, statistics, and beta reporting are enabled.";
+  const subtitle = ACTIVE_APP_MODE==="public" ? publicSubtitle : (ACTIVE_APP_MODE==="beta" ? betaSubtitle : developerSubtitle);
+
+  homeIcon.textContent = THEME_CONFIG.icon || "🚗";
+  homeTitle.textContent = THEME_CONFIG.homeTitle || TEST_CONFIG.title;
+  homeSubtitle.textContent = subtitle;
+  homeVersion.innerHTML = renderBetaIdBlock()+"<b>"+escapeHtml(TEST_CONFIG.version)+"</b><br>Passing target: "+TEST_CONFIG.passingScore+" / "+TEST_CONFIG.totalQuestions;
+
+  const actions = document.getElementById("homeActions") || homeScreen.querySelector(".welcome-actions");
+  if(actions){
+    actions.innerHTML = "";
+    const startBtn = document.createElement("button");
+    startBtn.className = "primary-btn";
+    startBtn.textContent = "Start Practice Test";
+    startBtn.onclick = function(){ RoadReadyNav.startNewTest(); };
+    actions.appendChild(startBtn);
+
+    const statsBtn = document.createElement("button");
+    statsBtn.className = "secondary-btn";
+    statsBtn.textContent = "View Statistics";
+    statsBtn.onclick = function(){ showStatsScreen(); };
+    actions.appendChild(statsBtn);
+
+    if(ACTIVE_APP_MODE==="developer"){
+      const devBtn = document.createElement("button");
+      devBtn.className = "secondary-btn";
+      devBtn.textContent = "Developer Dashboard";
+      devBtn.onclick = function(){ showDeveloperDashboard(); };
+      actions.appendChild(devBtn);
+    }
+  }
+
+  let modeBlock = document.getElementById("homeModeNotice");
+  if(!modeBlock){
+    modeBlock = document.createElement("div");
+    modeBlock.id = "homeModeNotice";
+    const content = homeScreen.querySelector(".welcome-content");
+    const version = document.getElementById("homeVersion");
+    if(content && version) content.insertBefore(modeBlock, version);
+  }
+  if(modeBlock){
+    if(ACTIVE_APP_MODE==="developer"){
+      modeBlock.className = "dev-tool-panel";
+      modeBlock.style.textAlign = "left";
+      modeBlock.style.margin = "16px auto";
+      modeBlock.style.maxWidth = "650px";
+      modeBlock.innerHTML = "<b>Developer Mode:</b> Validation, simulation, blueprint tools, question search, and beta reporting are enabled.";
+      modeBlock.style.display = "block";
+    }else if(ACTIVE_APP_MODE==="beta"){
+      modeBlock.className = "beta-report-banner";
+      modeBlock.style.textAlign = "left";
+      modeBlock.style.margin = "16px auto";
+      modeBlock.style.maxWidth = "650px";
+      modeBlock.innerHTML = "<b>Beta Mode:</b> Use the test normally. Feedback reports become available after several completed tests.";
+      modeBlock.style.display = "block";
+    }else{
+      modeBlock.innerHTML = "";
+      modeBlock.style.display = "none";
+    }
+  }
+
+  if(typeof updateModeBadge==="function") updateModeBadge();
+  window.scrollTo(0,0);
+}
+
+
+/* ============================================================
+   RoadReady Smart Randomizer v1.4
+   Goal: keep blueprint balance while reducing repeated/favored questions.
+   ============================================================ */
+function getRecentQuestionIds(limit=75){
+  const p=loadProgress();
+  const ids=[];
+  (p.attempts||[]).slice(-10).forEach(a=>{
+    (a.questionIds||[]).forEach(id=>ids.push(id));
+  });
+  return ids.slice(-limit);
+}
+
+function getQuestionSeenCount(id){
+  const p=loadProgress();
+  const stat=p.questionStats && p.questionStats[id];
+  return stat ? (stat.seen||0) : 0;
+}
+
+function smartShufflePool(pool, runtimeCounts={}, recentIds=[]){
+  const recentSet=new Set(recentIds||[]);
+  const scored=pool.map(q=>{
+    const savedSeen=getQuestionSeenCount(q.id);
+    const runtimeSeen=runtimeCounts[q.id]||0;
+    const recentPenalty=recentSet.has(q.id)?1000:0;
+    const tinyRandom=Math.random();
+    return {
+      q,
+      score:savedSeen+runtimeSeen+recentPenalty+tinyRandom
+    };
+  });
+  scored.sort((a,b)=>a.score-b.score);
+  return scored.map(x=>x.q);
+}
+
+function selectSmartFromCategory(category, needed, selected, used, runtimeCounts={}, recentIds=[]){
+  const pool=QUESTION_BANK.filter(q=>q.category===category && !used.has(q.id));
+  const ordered=smartShufflePool(pool, runtimeCounts, recentIds);
+  ordered.slice(0,needed).forEach(q=>{
+    if(selected.length<TEST_CONFIG.totalQuestions){
+      selected.push(q);
+      used.add(q.id);
+      runtimeCounts[q.id]=(runtimeCounts[q.id]||0)+1;
+    }
+  });
+}
+
+function buildQuestionSet(){
+  let selected=[],used=new Set();
+  const runtimeCounts={};
+  const recentIds=getRecentQuestionIds(75);
+
+  // First pass: satisfy the blueprint with least-seen questions in each category.
+  Object.keys(EXAM_BLUEPRINT).forEach(cat=>{
+    const needed=EXAM_BLUEPRINT[cat];
+    selectSmartFromCategory(cat, needed, selected, used, runtimeCounts, recentIds);
+  });
+
+  // Second pass: if a blueprint category is short, fill remaining slots with least-seen unused questions overall.
+  const remainingNeeded=TEST_CONFIG.totalQuestions-selected.length;
+  if(remainingNeeded>0){
+    const remainder=smartShufflePool(QUESTION_BANK.filter(q=>!used.has(q.id)), runtimeCounts, recentIds);
+    remainder.slice(0,remainingNeeded).forEach(q=>{
+      selected.push(q);
+      used.add(q.id);
+      runtimeCounts[q.id]=(runtimeCounts[q.id]||0)+1;
+    });
+  }
+
+  // Final light shuffle preserves fairness while preventing obvious category blocks.
+  currentQuestions=shuffle(selected).map(q=>({...q,choices:shuffle(q.choices)}));
+}
+
+function renderQuestions(){questionContainer.innerHTML="";currentQuestions.forEach((item,idx)=>{const s=document.createElement("section");s.className="card question";s.id="q"+idx;s.dataset.category=item.category;s.dataset.questionId=item.id||"";let h=`<div class="question-meta">Question ${idx+1} of ${currentQuestions.length} · Section: ${escapeHtml(item.category)}</div><div class="question-text">${escapeHtml(item.question)}</div>`;item.choices.forEach((choice,ci)=>{h+=`<label class="choice" data-q="${idx}" data-choice="${ci}"><input type="radio" name="q${idx}" value="${ci}" onchange="updateProgress()"> <b>${String.fromCharCode(65+ci)}.</b> ${escapeHtml(choice.text)}</label>`});h+=`<div class="feedback" id="fb${idx}"></div>`;s.innerHTML=h;questionContainer.appendChild(s)})}
+function updateProgress(){let answered=0;for(let i=0;i<currentQuestions.length;i++){if(document.querySelector('input[name="q'+i+'"]:checked'))answered++}answeredCount.textContent="Answered: "+answered+" / "+currentQuestions.length;progressFill.style.width=(answered/currentQuestions.length*100)+"%"}
+function gradeTest(){
+let score=0,unanswered=0;
+missedQuestions=new Set();
+const catStats={};
+
+for(let i=0;i<currentQuestions.length;i++){
+const item=currentQuestions[i],sel=document.querySelector('input[name="q'+i+'"]:checked'),labels=document.querySelectorAll("#q"+i+" .choice"),fb=document.getElementById("fb"+i);
+if(!catStats[item.category])catStats[item.category]={right:0,total:0,wrong:0,unanswered:0};
+catStats[item.category].total++;
+
+labels.forEach(l=>{
+l.classList.remove("correct","incorrect");
+const ci=Number(l.dataset.choice);
+if(item.choices[ci].correct)l.classList.add("correct")
+});
+
+const correctIndex=item.choices.findIndex(c=>c.correct);
+
+if(!sel){
+unanswered++;
+catStats[item.category].unanswered++;
+missedQuestions.add(i);
+fb.style.display="block";
+fb.innerHTML='<span class="badge incorrect-b">Not answered</span> Correct answer: <b>'+String.fromCharCode(65+correctIndex)+"</b><br><b>Category:</b> "+escapeHtml(item.category)+"<br>"+escapeHtml(item.explanation);
+continue
+}
+
+const val=Number(sel.value),chosen=item.choices[val];
+recordQuestionTiming(!!chosen.correct);
+
+if(chosen.correct){
+score++;
+catStats[item.category].right++;
+fb.style.display="block";
+fb.innerHTML='<span class="badge correct-b">Correct</span> <b>Category:</b> '+escapeHtml(item.category)+"<br>"+escapeHtml(item.explanation)
+}else{
+catStats[item.category].wrong++;
+missedQuestions.add(i);
+const wrong=document.querySelector('#q'+i+' .choice[data-choice="'+val+'"]');
+if(wrong)wrong.classList.add("incorrect");
+fb.style.display="block";
+fb.innerHTML='<span class="badge incorrect-b">Incorrect</span> Correct answer: <b>'+String.fromCharCode(65+correctIndex)+"</b><br><b>Category:</b> "+escapeHtml(item.category)+"<br>"+escapeHtml(item.explanation)
+}
+}
+updateStoredProgress(score,catStats,unanswered);
+finalizeTestTiming(score,currentQuestions.length-score-unanswered,unanswered);
+showScore(score,catStats,unanswered)
+}
+function updateStoredProgress(score,catStats,unanswered){
+const p=loadProgress(),total=currentQuestions.length,percent=Math.round(score/total*100),passed=score>=TEST_CONFIG.passingScore;
+p.totalTests++;
+if(passed){
+  p.passedTests++;
+  p.currentPassStreak=(p.currentPassStreak||0)+1;
+  p.longestPassStreak=Math.max(p.longestPassStreak||0,p.currentPassStreak);
+}else{
+  p.failedTests++;
+  p.currentPassStreak=0;
+}
+if(score===total)p.perfectTests=(p.perfectTests||0)+1;
+
+p.totalQuestionsAnswered+=total;
+p.totalCorrectAnswers+=score;
+p.totalUnanswered=(p.totalUnanswered||0)+unanswered;
+p.bestScore=Math.max(p.bestScore||0,score);
+p.lastScore=score;
+p.lastPercent=percent;
+p.lastResult=passed?"PASS":"REVIEW";
+
+Object.keys(catStats).forEach(c=>{
+if(!p.categoryStats[c])p.categoryStats[c]={right:0,total:0,wrong:0,unanswered:0,missed:0};
+const s=catStats[c];
+p.categoryStats[c].right+=s.right;
+p.categoryStats[c].total+=s.total;
+p.categoryStats[c].wrong+=(s.wrong||0);
+p.categoryStats[c].unanswered+=(s.unanswered||0);
+p.categoryStats[c].missed+=(s.total-s.right);
+});
+
+// Per-question analytics for future randomizer and content-quality reports.
+if(!p.questionStats)p.questionStats={};
+for(let i=0;i<currentQuestions.length;i++){
+  const q=currentQuestions[i];
+  const qid=q.id || ("NO-ID-"+i);
+  if(!p.questionStats[qid]){
+    p.questionStats[qid]={seen:0,correct:0,wrong:0,unanswered:0,category:q.category};
+  }
+  const selected=document.querySelector('input[name="q'+i+'"]:checked');
+  p.questionStats[qid].seen++;
+  p.questionStats[qid].category=q.category;
+  if(!selected){
+    p.questionStats[qid].unanswered++;
+  }else{
+    const val=Number(selected.value);
+    if(q.choices[val].correct)p.questionStats[qid].correct++;
+    else p.questionStats[qid].wrong++;
+  }
+}
+
+p.attemptHistory.push({date:new Date().toLocaleString(),score,total,percent,result:passed?"PASS":"REVIEW",wrong:total-score-unanswered,unanswered,questionIds:currentQuestions.map(q=>q.id||"NO-ID")});
+if(p.attemptHistory.length>200)p.attemptHistory=p.attemptHistory.slice(-200);
+saveProgress(p)
+}
+function showScore(score,catStats,unanswered){
+const total=currentQuestions.length,wrong=total-score-unanswered,percent=Math.round(score/total*100),status=score>=TEST_CONFIG.passingScore?"PASS":"REVIEW",msg=score>=22?"Excellent work.":score>=TEST_CONFIG.passingScore?"Likely ready, but review missed questions.":score>=16?"Close, but review weak areas before testing.":"Study the handbook and retake this test.";
+let summary='<div class="summary-grid">';
+Object.keys(catStats).sort().forEach(c=>{
+const s=catStats[c];
+summary+='<div class="summary-item"><b>'+escapeHtml(c)+'</b><br>'+s.right+" / "+s.total+" correct<br>"+(s.wrong||0)+" wrong<br>"+(s.unanswered||0)+" unanswered</div>"
+});
+summary+="</div>";
+scoreBox.style.display="block";
+let betaBanner="";
+const progressForPrompt=loadProgress();
+if(shouldPromptBetaReport(progressForPrompt)){
+betaBanner="<div class='beta-report-banner'><h3>⭐ Beta Feedback Requested</h3><p>You have completed "+progressForPrompt.totalTests+" practice test(s). Please generate a beta feedback report and send it back to the project owner.</p><button class='primary-btn' onclick='generateBetaReport()'>Generate Beta Report</button> <button class='secondary-btn' onclick='dismissBetaReportPrompt()'>Remind Me Later</button></div>";
+}
+scoreBox.innerHTML="<h2>Score: "+score+" / "+total+" ("+percent+"%) - "+status+"</h2><p><b>Correct:</b> "+score+" out of "+total+"<br><b>Wrong:</b> "+wrong+"<br><b>Unanswered:</b> "+unanswered+"</p><p>"+msg+"</p>"+betaBanner+"<h3>Category Review</h3>"+summary;
+reviewBtn.style.display=missedQuestions.size?"inline-block":"none";
+document.querySelectorAll(".question").forEach(q=>q.style.display="block");
+scoreBox.scrollIntoView({behavior:"smooth",block:"center"})
+}
+function reviewIncorrect(){if(!missedQuestions.size)return;document.querySelectorAll(".question").forEach((q,idx)=>{q.style.display=missedQuestions.has(idx)?"block":"none"})}
+
+function getDeveloperHealth(){
+  const ids = {};
+  const duplicateIds = [];
+  const blueprintCategories = Object.keys(EXAM_BLUEPRINT);
+  const bankCategories = [...new Set(QUESTION_BANK.map(q=>q.category))].sort();
+
+  QUESTION_BANK.forEach(q=>{
+    if(q.id){
+      ids[q.id]=(ids[q.id]||0)+1;
+      if(ids[q.id]===2) duplicateIds.push(q.id);
+    }
+  });
+
+  const blueprintTotal = Object.values(EXAM_BLUEPRINT).reduce((a,b)=>a+b,0);
+  const missingIds = QUESTION_BANK.filter(q=>!q.id);
+  const missingExplanations = QUESTION_BANK.filter(q=>!q.explanation || !String(q.explanation).trim());
+  const badCorrect = QUESTION_BANK.filter(q=>!q.choices || q.choices.filter(c=>c.correct).length!==1);
+  const badChoices = QUESTION_BANK.filter(q=>!q.choices || q.choices.length!==4);
+  const blueprintMissingCategories = blueprintCategories.filter(c=>!bankCategories.includes(c));
+  const unusedBankCategories = bankCategories.filter(c=>!blueprintCategories.includes(c));
+
+  const shortCategories = blueprintCategories.filter(c=>{
+    const requested = EXAM_BLUEPRINT[c];
+    const available = QUESTION_BANK.filter(q=>q.category===c).length;
+    return available < requested;
+  });
+
+  const minimumOnlyCategories = blueprintCategories.filter(c=>{
+    const requested = EXAM_BLUEPRINT[c];
+    const available = QUESTION_BANK.filter(q=>q.category===c).length;
+    return available === requested;
+  });
+
+  const warnings = [];
+  const info = [];
+
+  if(blueprintTotal !== TEST_CONFIG.totalQuestions){
+    warnings.push("Blueprint requests "+blueprintTotal+" questions, but TEST_CONFIG.totalQuestions is "+TEST_CONFIG.totalQuestions+".");
+  }
+
+  if(shortCategories.length){
+    warnings.push("Some categories do not have enough questions: "+shortCategories.join(", ")+".");
+  }
+
+  if(minimumOnlyCategories.length){
+    warnings.push("Some categories have exactly the minimum requested count, so no random variety is possible there yet: "+minimumOnlyCategories.join(", ")+".");
+  }
+
+  if(duplicateIds.length){
+    warnings.push("Duplicate question IDs found: "+duplicateIds.join(", ")+".");
+  }
+
+  if(missingIds.length){
+    warnings.push(missingIds.length+" question(s) are missing IDs.");
+  }
+
+  if(missingExplanations.length){
+    warnings.push(missingExplanations.length+" question(s) are missing explanations.");
+  }
+
+  if(badCorrect.length){
+    warnings.push(badCorrect.length+" question(s) do not have exactly one correct answer.");
+  }
+
+  if(badChoices.length){
+    warnings.push(badChoices.length+" question(s) do not have exactly four choices.");
+  }
+
+  if(blueprintMissingCategories.length){
+    warnings.push("Blueprint references categories not found in the bank: "+blueprintMissingCategories.join(", ")+".");
+  }
+
+  if(unusedBankCategories.length){
+    info.push("Question bank contains categories not used by the active blueprint: "+unusedBankCategories.join(", ")+".");
+  }
+
+  return {
+    blueprintTotal,
+    missingIds,
+    duplicateIds,
+    missingExplanations,
+    badCorrect,
+    badChoices,
+    blueprintMissingCategories,
+    unusedBankCategories,
+    shortCategories,
+    minimumOnlyCategories,
+    warnings,
+    info,
+    categoriesInBank: bankCategories
+  };
+}
+
+
+function getQuestionStatsForId(id){
+  const p=loadProgress();
+  return (p.questionStats && p.questionStats[id]) ? p.questionStats[id] : {seen:0,correct:0,wrong:0,unanswered:0};
+}
+function calculateQuestionMissRate(stat){
+  const seen=stat.seen||0;
+  return seen?Math.round(((stat.wrong||0)+(stat.unanswered||0))/seen*100):0;
+}
+function renderQuestionInspectorById(id){
+  const q=QUESTION_BANK.find(x=>x.id===id);
+  if(!q)return "<div class='validation-warning'><h3>Question Not Found</h3><p>No question found for ID: "+escapeHtml(id)+"</p></div>";
+  const stat=getQuestionStatsForId(id);
+  const correctChoice=(q.choices||[]).find(c=>c.correct);
+  const wrongChoices=(q.choices||[]).filter(c=>!c.correct);
+  return "<div class='dev-tool-panel'><h3>Question Inspector</h3>"+
+    "<div class='inspector-grid'>"+
+    "<div class='inspector-card'><b>ID</b><br><span class='dev-code'>"+escapeHtml(q.id||"NO-ID")+"</span></div>"+
+    "<div class='inspector-card'><b>Category</b><br>"+escapeHtml(q.category||"")+"</div>"+
+    "<div class='inspector-card'><b>Difficulty</b><br>"+escapeHtml(q.difficulty||"Not set")+"</div>"+
+    "<div class='inspector-card'><b>Chapter / Page</b><br>"+escapeHtml(String(q.chapter||""))+" / "+escapeHtml(String(q.handbookPage||""))+"</div>"+
+    "<div class='inspector-card'><b>Section</b><br>"+escapeHtml(q.section||"")+"</div>"+
+    "<div class='inspector-card'><b>Objective</b><br>"+escapeHtml(q.objective||"")+"</div>"+
+    "<div class='inspector-card'><b>Seen</b><br>"+(stat.seen||0)+"</div>"+
+    "<div class='inspector-card'><b>Correct</b><br>"+(stat.correct||0)+"</div>"+
+    "<div class='inspector-card'><b>Wrong</b><br>"+(stat.wrong||0)+"</div>"+
+    "<div class='inspector-card'><b>Unanswered</b><br>"+(stat.unanswered||0)+"</div>"+
+    "<div class='inspector-card'><b>Miss Rate</b><br>"+calculateQuestionMissRate(stat)+"%</div>"+
+    "<div class='inspector-card'><b>Version</b><br>"+escapeHtml(q.moduleVersion||"")+"</div>"+
+    "</div><h4>Question</h4><p>"+escapeHtml(q.question||"")+"</p>"+
+    "<h4>Correct Answer</h4><p><b>"+escapeHtml(correctChoice?correctChoice.text:"No correct answer found")+"</b></p>"+
+    "<h4>Distractors</h4><ul>"+wrongChoices.map(c=>"<li>"+escapeHtml(c.text)+"</li>").join("")+"</ul>"+
+    "<h4>Explanation</h4><p>"+escapeHtml(q.explanation||"")+"</p>"+
+    "<h4>Keywords</h4><p>"+escapeHtml((q.keywords||[]).join(", "))+"</p></div>";
+}
+function developerQuestionSearch(){
+  const term=(document.getElementById("devQuestionSearchInput")?.value||"").trim().toLowerCase();
+  const out=document.getElementById("devQuestionSearchResults");
+  if(!out)return;
+  if(!term){out.innerHTML="<p>Enter a question ID, category, keyword, or phrase.</p>";return;}
+  const matches=QUESTION_BANK.filter(q=>{
+    const hay=[q.id,q.category,q.difficulty,q.objective,q.section,q.question,q.explanation,(q.keywords||[]).join(" ")].join(" ").toLowerCase();
+    return hay.includes(term);
+  }).slice(0,50);
+  out.innerHTML=matches.length?matches.map(q=>"<div class='dev-result-item' onclick='developerInspectQuestion(\""+escapeHtml(q.id)+"\")'><b>"+escapeHtml(q.id)+"</b> — "+escapeHtml(q.category)+"<br><span class='dev-small'>"+escapeHtml(q.question).slice(0,140)+"</span></div>").join(""):"<p>No matches found.</p>";
+}
+function developerInspectQuestion(id){
+  const box=document.getElementById("devInspectorBox");
+  if(box)box.innerHTML=renderQuestionInspectorById(id);
+}
+function runRandomizerSimulation(iterations){
+  iterations=Number(iterations)||1000;
+  const counts={}; QUESTION_BANK.forEach(q=>counts[q.id]=0);
+
+  function simSmartPool(pool){
+    return pool.map(q=>({q,score:(counts[q.id]||0)+Math.random()})).sort((a,b)=>a.score-b.score).map(x=>x.q);
+  }
+
+  for(let n=0;n<iterations;n++){
+    const used=new Set();
+    let selected=[];
+    Object.keys(EXAM_BLUEPRINT).forEach(category=>{
+      const needed=EXAM_BLUEPRINT[category];
+      simSmartPool(QUESTION_BANK.filter(q=>q.category===category && !used.has(q.id))).slice(0,needed).forEach(q=>{
+        selected.push(q);
+        used.add(q.id);
+      });
+    });
+    if(selected.length<TEST_CONFIG.totalQuestions){
+      simSmartPool(QUESTION_BANK.filter(q=>!used.has(q.id))).slice(0,TEST_CONFIG.totalQuestions-selected.length).forEach(q=>{
+        selected.push(q);
+        used.add(q.id);
+      });
+    }
+    selected.forEach(q=>counts[q.id]++);
+  }
+
+  const usedIds=Object.keys(counts).filter(id=>counts[id]>0), never=Object.keys(counts).filter(id=>counts[id]===0);
+  const vals=usedIds.map(id=>counts[id]), min=vals.length?Math.min(...vals):0, max=vals.length?Math.max(...vals):0, avg=vals.length?(vals.reduce((a,b)=>a+b,0)/vals.length):0;
+  const expected=iterations*TEST_CONFIG.totalQuestions/QUESTION_BANK.length;
+
+  const categoryDiagnostics=Object.keys(EXAM_BLUEPRINT).sort().map(cat=>{
+    const catQuestions=QUESTION_BANK.filter(q=>q.category===cat);
+    const catCounts=catQuestions.map(q=>counts[q.id]||0);
+    const activeCount=catQuestions.length;
+    const totalPicks=iterations*(EXAM_BLUEPRINT[cat]||0);
+    const expectedPerQuestion=activeCount?totalPicks/activeCount:0;
+    const catMin=catCounts.length?Math.min(...catCounts):0;
+    const catMax=catCounts.length?Math.max(...catCounts):0;
+    const catAvg=catCounts.length?(catCounts.reduce((a,b)=>a+b,0)/catCounts.length):0;
+    const spread=catMax-catMin;
+    const spreadPct=expectedPerQuestion?spread/expectedPerQuestion:0;
+    let status="Excellent", cls="category-health-ok", stars="★★★★★";
+    if(spreadPct>.10){status="Good";cls="category-health-ok";stars="★★★★☆";}
+    if(spreadPct>.20){status="Review";cls="category-health-warn";stars="★★★☆☆";}
+    if(spreadPct>.35){status="Possible Bias";cls="category-health-bad";stars="★★☆☆☆";}
+    return {
+      category:cat,
+      requested:EXAM_BLUEPRINT[cat]||0,
+      available:activeCount,
+      expectedPct:Math.round(((EXAM_BLUEPRINT[cat]||0)/TEST_CONFIG.totalQuestions)*1000)/10,
+      actualPct:Math.round((totalPicks/(iterations*TEST_CONFIG.totalQuestions))*1000)/10,
+      totalPicks,
+      expectedPerQuestion:expectedPerQuestion.toFixed(2),
+      min:catMin,
+      max:catMax,
+      avg:catAvg.toFixed(2),
+      spread,
+      spreadPct,
+      status,
+      cls,
+      stars
+    };
+  });
+
+  const avgSpreadPct=categoryDiagnostics.length
+    ? categoryDiagnostics.reduce((sum,c)=>sum+c.spreadPct,0)/categoryDiagnostics.length
+    : 0;
+  const worst=categoryDiagnostics.slice().sort((a,b)=>b.spreadPct-a.spreadPct)[0];
+  let grade="A+", gradeText="Excellent", health="<span class='sim-good'>Excellent</span>";
+  if(avgSpreadPct>.10){grade="A";gradeText="Strong";health="<span class='sim-good'>Strong</span>";}
+  if(avgSpreadPct>.20){grade="B";gradeText="Review";health="<span class='sim-warn'>Review</span>";}
+  if(avgSpreadPct>.35){grade="C";gradeText="Needs Tuning";health="<span class='sim-bad'>Needs Tuning</span>";}
+
+  return {
+    iterations,
+    used:usedIds.length,
+    never:never.length,
+    min,max,avg:avg.toFixed(2),
+    expected:expected.toFixed(2),
+    health,
+    grade,
+    gradeText,
+    avgSpreadPct:(avgSpreadPct*100).toFixed(1),
+    worstCategory:worst?worst.category:"",
+    categoryDiagnostics,
+    most:Object.keys(counts).sort((a,b)=>counts[b]-counts[a]).slice(0,10),
+    least:Object.keys(counts).filter(id=>counts[id]>0).sort((a,b)=>counts[a]-counts[b]).slice(0,10),
+    counts
+  };
+}
+
+function developerRunSimulation(){
+  const r=runRandomizerSimulation(Number(document.getElementById("simIterations")?.value)||1000);
+  const out=document.getElementById("simulationResults"); if(!out)return;
+
+  const neverIds = Object.keys(r.counts).filter(id=>r.counts[id]===0);
+  const categoryRows = r.categoryDiagnostics.map(c=>{
+    return "<tr><td>"+escapeHtml(c.category)+"</td><td>"+c.requested+"</td><td>"+c.available+"</td><td>"+c.expectedPerQuestion+"</td><td>"+c.min+"</td><td>"+c.max+"</td><td>"+c.spread+"</td><td><span class='"+c.cls+"'>"+c.stars+" "+escapeHtml(c.status)+"</span></td></tr>";
+  }).join("");
+
+  const categoryPctRows = r.categoryDiagnostics.map(c=>{
+    return "<tr><td>"+escapeHtml(c.category)+"</td><td>"+c.expectedPct+"%</td><td>"+c.actualPct+"%</td><td>"+c.totalPicks+"</td></tr>";
+  }).join("");
+
+  out.innerHTML="<div class='dev-tool-panel'><h3>Simulation Results</h3>"+
+    "<div class='summary-grid'>"+
+    "<div class='summary-item'><b>Randomizer Grade</b><br><span class='grade-badge'>"+r.grade+"</span><br>"+escapeHtml(r.gradeText)+"</div>"+
+    "<div class='summary-item'><b>Tests Simulated</b><br>"+r.iterations+"</div>"+
+    "<div class='summary-item'><b>Questions Used</b><br>"+r.used+" / "+QUESTION_BANK.length+"</div>"+
+    "<div class='summary-item'><b>Not Yet Used</b><br>"+r.never+"</div>"+
+    "<div class='summary-item'><b>Avg Category Spread</b><br>"+r.avgSpreadPct+"%</div>"+
+    "<div class='summary-item'><b>Worst Category</b><br>"+escapeHtml(r.worstCategory||"None")+"</div>"+
+    "<div class='summary-item'><b>Overall Status</b><br>"+r.health+"</div>"+
+    "</div>"+
+
+    "<h4>Category Blueprint Accuracy</h4>"+
+    "<table class='dev-table'><thead><tr><th>Category</th><th>Expected</th><th>Actual</th><th>Total Picks</th></tr></thead><tbody>"+categoryPctRows+"</tbody></table>"+
+
+    "<h4>Per-Category Question Fairness</h4>"+
+    "<table class='dev-table'><thead><tr><th>Category</th><th>Requested</th><th>Available</th><th>Expected / Question</th><th>Lowest</th><th>Highest</th><th>Spread</th><th>Status</th></tr></thead><tbody>"+categoryRows+"</tbody></table>"+
+
+    "<h4>Questions Not Yet Used</h4>"+(neverIds.length?"<p>"+neverIds.map(id=>"<span class='dev-code'>"+escapeHtml(id)+"</span>").join(" ")+"</p>":"<p><span class='sim-good'>All active blueprint questions were used.</span></p>")+
+
+    "<details><summary><b>Overall Most / Least Used Across Entire Bank</b></summary>"+
+    "<p class='dev-small'>These are less important than per-category fairness because the blueprint intentionally weights categories differently.</p>"+
+    "<h4>Most Used</h4><ol>"+r.most.map(id=>"<li><span class='dev-code'>"+escapeHtml(id)+"</span> — "+r.counts[id]+"</li>").join("")+"</ol>"+
+    "<h4>Least Used</h4><ol>"+r.least.map(id=>"<li><span class='dev-code'>"+escapeHtml(id)+"</span> — "+r.counts[id]+"</li>").join("")+"</ol></details>"+
+    "</div>";
+}
+
+function renderBlueprintSandbox(){
+  let rows="";
+  Object.keys(EXAM_BLUEPRINT).sort().forEach(c=>{rows+="<tr><td>"+escapeHtml(c)+"</td><td><input data-bluecat='"+escapeHtml(c)+"' type='number' min='0' max='25' value='"+EXAM_BLUEPRINT[c]+"' style='width:70px'></td><td>"+QUESTION_BANK.filter(q=>q.category===c).length+"</td></tr>";});
+  return "<div class='dev-tool-panel'><h3>Blueprint Sandbox</h3><p class='dev-small'>Planning tool only; it does not rewrite the module.</p><table class='dev-table'><thead><tr><th>Category</th><th>Requested</th><th>Available</th></tr></thead><tbody>"+rows+"</tbody></table><button class='secondary-btn' onclick='developerCheckBlueprintSandbox()'>Check Sandbox Blueprint</button><div id='blueprintSandboxResult'></div></div>";
+}
+function developerCheckBlueprintSandbox(){
+  const inputs=document.querySelectorAll("[data-bluecat]"); let total=0,warnings=[];
+  inputs.forEach(i=>{const cat=i.dataset.bluecat,val=Number(i.value)||0;total+=val;const avail=QUESTION_BANK.filter(q=>q.category===cat).length;if(val>avail)warnings.push(cat+" requests "+val+" but only "+avail+" available.");});
+  const out=document.getElementById("blueprintSandboxResult");
+  if(out)out.innerHTML="<p><b>Sandbox Total:</b> "+total+" / "+TEST_CONFIG.totalQuestions+"</p>"+(warnings.length?"<div class='validation-warning'><h3>Sandbox Warnings</h3><ul>"+warnings.map(w=>"<li>"+escapeHtml(w)+"</li>").join("")+"</ul></div>":"<div class='validation-ok'><h3>✓ Sandbox Blueprint Looks Valid</h3><p>No category shortages found.</p></div>");
+}
+function renderDeveloperToolsPanel(){
+  return "<div class='dev-tool-panel'><h3>Beta Tester ID</h3>"+renderBetaIdBlock()+"</div><div class='dev-tool-panel'><h3>Mode Switcher</h3><p class='dev-small'>Hotkeys: F8 cycles modes. Ctrl+Alt+1 Developer, Ctrl+Alt+2 Beta, Ctrl+Alt+3 Public.</p><button class='secondary-btn' onclick='setActiveAppMode(\"developer\")'>Developer</button> <button class='secondary-btn' onclick='setActiveAppMode(\"beta\")'>Beta</button> <button class='secondary-btn' onclick='setActiveAppMode(\"public\")'>Public</button></div><div class='dev-tool-panel'><h3>Question Search / Inspector</h3><div class='dev-search-row'><input id='devQuestionSearchInput' placeholder='Search ID, category, keyword, or question text...' oninput='developerQuestionSearch()'><button class='secondary-btn' onclick='developerQuestionSearch()'>Search</button></div><div id='devQuestionSearchResults' class='dev-results'><p>Enter a search term to inspect questions.</p></div><div id='devInspectorBox'></div></div>"+
+  "<div class='dev-tool-panel'><h3>Randomizer Simulation</h3><p class='dev-small'>Generates tests without saving scores and grades fairness inside each blueprint category.</p><div class='dev-search-row'><input id='simIterations' type='number' min='100' max='50000' step='100' value='1000'><button class='primary-btn' onclick='developerRunSimulation()'>Run Simulation</button></div><div id='simulationResults'></div></div>"+renderBlueprintSandbox();
+}
+function showDeveloperDashboard(){
+  if(ACTIVE_APP_MODE!=="developer") return;
+  appHeader.classList.remove("hidden");
+  homeScreen.classList.add("hidden");
+  testScreen.classList.add("hidden");
+  statsScreen.style.display="none";
+  developerScreen.style.display="block";
+  updateDeveloperDashboard();
+  developerScreen.scrollIntoView({behavior:"smooth",block:"start"});
+}
+
+function updateDeveloperDashboard(){
+  if(ACTIVE_APP_MODE!=="developer") return;
+
+  const health = getDeveloperHealth();
+
+  let validationHtml = "";
+  if(health.warnings.length){
+    validationHtml = "<div class='validation-warning'><h3>⚠ Engine Warnings</h3><ul>" +
+      health.warnings.map(w=>"<li>"+escapeHtml(w)+"</li>").join("") +
+      "</ul></div>";
+  } else {
+    validationHtml = "<div class='validation-ok'><h3>✓ Engine Health Check Passed</h3><p>No validation warnings found.</p></div>";
+  }
+  if(health.info && health.info.length){
+    validationHtml += "<div class='dev-tool-panel'><h3>Developer Info</h3><ul>"+health.info.map(i=>"<li>"+escapeHtml(i)+"</li>").join("")+"</ul></div>";
+  }
+
+  let rows = "";
+  Object.keys(EXAM_BLUEPRINT).sort().forEach(category=>{
+    const requested = EXAM_BLUEPRINT[category];
+    const available = QUESTION_BANK.filter(q=>q.category===category).length;
+    const selected = currentQuestions.filter(q=>q.category===category).length;
+    const percentage = TEST_CONFIG.totalQuestions ? Math.round((requested / TEST_CONFIG.totalQuestions) * 100) : 0;
+
+    let status = '<span class="dev-ok">OK</span>';
+    let rowStyle = "";
+    if(available < requested){
+      status = '<span class="dev-warn">SHORT</span>';
+      rowStyle = " style='background:#fff0f0;'";
+    } else if(available === requested){
+      status = '<span style="color:#b7791f;font-weight:800;">MINIMUM</span>';
+      rowStyle = " style='background:#fff8dc;'";
+    }
+
+    rows += "<tr"+rowStyle+"><td>"+escapeHtml(category)+"</td><td>"+requested+"</td><td>"+percentage+"%</td><td>"+available+"</td><td>"+selected+"</td><td>"+status+"</td></tr>";
+  });
+
+  const selectedIds = currentQuestions.length
+    ? "<ol>"+currentQuestions.map(q=>"<li><span class='dev-code'>"+escapeHtml(q.id||"NO-ID")+"</span> — "+escapeHtml(q.category)+"</li>").join("")+"</ol>"
+    : "<p>No test generated yet.</p>";
+
+  const duplicateText = health.duplicateIds.length ? health.duplicateIds.map(escapeHtml).join(", ") : "None";
+
+  developerScreen.innerHTML =
+    "<h2>Developer Dashboard</h2>"+renderContextNav("developer")+
+    "<p><b>App Mode:</b> <span class='dev-code'>"+ACTIVE_APP_MODE+"</span> <span class='dev-small'>(default: "+APP_MODE+")</span><br>"+
+    "<b>Engine Version:</b> "+ENGINE_VERSION+"<br>"+
+    "<b>Module:</b> "+escapeHtml(TEST_CONFIG.state)+" — "+escapeHtml(TEST_CONFIG.licenseType)+"<br>"+
+    "<b>Module Version:</b> "+escapeHtml(TEST_CONFIG.version)+"<br>"+
+    "<b>Storage Key:</b> <span class='dev-code'>"+escapeHtml(getStorageKey())+"</span></p>"+
+
+    validationHtml+
+
+    "<h3>Engine Health</h3>"+
+    "<div class='summary-grid'>"+
+    "<div class='summary-item'><b>Question Bank</b><br>"+QUESTION_BANK.length+" questions</div>"+
+    "<div class='summary-item'><b>Blueprint Total</b><br>"+health.blueprintTotal+" requested</div>"+
+    "<div class='summary-item'><b>Configured Test Length</b><br>"+TEST_CONFIG.totalQuestions+" questions</div>"+
+    "<div class='summary-item'><b>Current Test</b><br>"+currentQuestions.length+" selected</div>"+
+    "<div class='summary-item'><b>Missing IDs</b><br>"+health.missingIds.length+"</div>"+
+    "<div class='summary-item'><b>Duplicate IDs</b><br>"+duplicateText+"</div>"+
+    "<div class='summary-item'><b>Missing Explanations</b><br>"+health.missingExplanations.length+"</div>"+
+    "<div class='summary-item'><b>Bad Correct Counts</b><br>"+health.badCorrect.length+"</div>"+
+    "<div class='summary-item'><b>Bad Choice Counts</b><br>"+health.badChoices.length+"</div>"+
+    "<div class='summary-item'><b>Unused Bank Categories</b><br>"+health.unusedBankCategories.length+"</div>"+
+    "</div>"+
+
+    "<h3>Blueprint / Balance Report</h3>"+
+    "<table class='dev-table'><thead><tr><th>Category</th><th>Requested</th><th>Exam %</th><th>Available</th><th>Selected Now</th><th>Status</th></tr></thead><tbody>"+rows+"</tbody></table>"+
+    "<p class='dev-small'><b>Status key:</b> OK = enough variety. MINIMUM = works, but no variety yet. SHORT = blueprint requests more questions than are available.</p>"+
+
+    "<h3>Current Randomizer Report</h3>"+
+    selectedIds+
+    renderDeveloperToolsPanel()+
+    "<p><button class='primary-btn' onclick='startTest()'>Generate New Test</button> <button class='secondary-btn' onclick='showHome()'>Back to Home</button></p>"+
+    "<p class='dev-small'>Developer tools are hidden automatically when <span class='dev-code'>APP_MODE</span> is set to <span class='dev-code'>beta</span> or <span class='dev-code'>public</span>.</p>";
+}
+
+
+function dismissBetaReportPrompt(){
+  markBetaReminderShown();
+  alert("No problem. You will be reminded again at the next feedback milestone.");
+}
+
+function getBrowserInfo(){
+  return {
+    userAgent: navigator.userAgent || "Unknown",
+    platform: navigator.platform || "Unknown",
+    language: navigator.language || "Unknown",
+    screen: (window.screen ? window.screen.width + "x" + window.screen.height : "Unknown"),
+    viewport: window.innerWidth + "x" + window.innerHeight
+  };
+}
+
+function buildBetaReportHtml(){
+  const p = loadProgress();
+  const average = p.totalQuestionsAnswered ? Math.round(p.totalCorrectAnswers / p.totalQuestionsAnswered * 100) : 0;
+  const averageScore = p.totalTests ? (p.totalCorrectAnswers / p.totalTests).toFixed(1) : "0.0";
+  const totalWrong = p.totalQuestionsAnswered - p.totalCorrectAnswers - (p.totalUnanswered || 0);
+  const passRate = p.totalTests ? Math.round((p.passedTests / p.totalTests) * 100) : 0;
+  const info = getBrowserInfo();
+  ensureTimeStats(p);
+  const ts = p.timeStats || {};
+  const avgTestTime = (ts.totalCompletedTests||0) ? (ts.totalStudySeconds||0)/(ts.totalCompletedTests||0) : 0;
+  const avgQuestionTime = (ts.totalQuestionsAnswered||0) ? (ts.totalQuestionSeconds||0)/(ts.totalQuestionsAnswered||0) : 0;
+  const avgCorrectTime = (ts.totalCorrectTimedAnswers||0) ? (ts.totalCorrectAnswerSeconds||0)/(ts.totalCorrectTimedAnswers||0) : 0;
+  const avgWrongTime = (ts.totalWrongTimedAnswers||0) ? (ts.totalWrongAnswerSeconds||0)/(ts.totalWrongTimedAnswers||0) : 0;
+
+  const cats = Object.keys(p.categoryStats || {}).sort();
+  let categoryRows = "";
+  if(!cats.length){
+    categoryRows = "<tr><td colspan='6'>No category data yet.</td></tr>";
+  } else {
+    cats.forEach(c=>{
+      const s = p.categoryStats[c];
+      const pct = s.total ? Math.round(s.right / s.total * 100) : 0;
+      categoryRows += "<tr><td>"+escapeHtml(c)+"</td><td>"+pct+"%</td><td>"+s.total+"</td><td>"+s.right+"</td><td>"+(s.wrong||0)+"</td><td>"+(s.unanswered||0)+"</td></tr>";
+    });
+  }
+
+  const allAttempts = p.attemptHistory || [];
+  const recentAttempts = allAttempts.slice(-10);
+  const olderAttempts = allAttempts.slice(0, Math.max(0, allAttempts.length - 10));
+
+  let attempts = "";
+  if(!recentAttempts.length){
+    attempts = "<li>No attempts recorded.</li>";
+  } else {
+    recentAttempts.forEach(a=>{
+      attempts += "<li>"+escapeHtml(a.date)+" — "+a.score+"/"+a.total+" ("+a.percent+"%) "+a.result+" | Wrong: "+(a.wrong ?? (a.total-a.score-(a.unanswered||0)))+" | Unanswered: "+(a.unanswered||0)+"</li>";
+    });
+  }
+
+  let olderSummaryHtml = "";
+  if(olderAttempts.length){
+    const olderCorrect = olderAttempts.reduce((sum,a)=>sum+a.score,0);
+    const olderTotal = olderAttempts.reduce((sum,a)=>sum+a.total,0);
+    const olderPassed = olderAttempts.filter(a=>a.result==="PASS").length;
+    const olderWrong = olderAttempts.reduce((sum,a)=>sum+(a.wrong ?? (a.total-a.score-(a.unanswered||0))),0);
+    const olderUnanswered = olderAttempts.reduce((sum,a)=>sum+(a.unanswered||0),0);
+    const olderAvgScore = olderAttempts.length ? (olderCorrect/olderAttempts.length).toFixed(1) : "0.0";
+    const olderAccuracy = olderTotal ? Math.round((olderCorrect/olderTotal)*100) : 0;
+    const olderPassRate = Math.round((olderPassed/olderAttempts.length)*100);
+    olderSummaryHtml = `
+      <h3>Older Attempts Summary</h3>
+      <div class="summary">
+        <div class="card"><b>Older Attempts</b><br>${olderAttempts.length}</div>
+        <div class="card"><b>Average Score</b><br>${olderAvgScore} / ${TEST_CONFIG.totalQuestions}</div>
+        <div class="card"><b>Accuracy</b><br>${olderAccuracy}%</div>
+        <div class="card"><b>Pass Rate</b><br>${olderPassRate}%</div>
+        <div class="card"><b>Total Wrong</b><br>${olderWrong}</div>
+        <div class="card"><b>Total Unanswered</b><br>${olderUnanswered}</div>
+      </div>`;
+  } else {
+    olderSummaryHtml = "<h3>Older Attempts Summary</h3><p>No older attempts beyond the last 10.</p>";
+  }
+
+  const questionStats = p.questionStats || {};
+  const qids = Object.keys(questionStats);
+  const seenQuestions = qids.filter(id=>questionStats[id].seen>0).length;
+  const neverSeen = QUESTION_BANK.filter(q=>!questionStats[q.id] || !questionStats[q.id].seen).map(q=>q.id);
+  let mostSeen = "N/A";
+  let leastSeen = "N/A";
+  if(qids.length){
+    const sortedSeen = [...qids].sort((a,b)=>questionStats[b].seen-questionStats[a].seen);
+    mostSeen = sortedSeen[0] + " (" + questionStats[sortedSeen[0]].seen + " times)";
+    const sortedLeast = [...qids].filter(id=>questionStats[id].seen>0).sort((a,b)=>questionStats[a].seen-questionStats[b].seen);
+    if(sortedLeast.length)leastSeen = sortedLeast[0] + " (" + questionStats[sortedLeast[0]].seen + " time" + (questionStats[sortedLeast[0]].seen===1?"":"s") + ")";
+  }
+
+  const missedSorted = qids
+    .filter(id=>questionStats[id].seen>0)
+    .map(id=>{
+      const s=questionStats[id];
+      const missed=(s.wrong||0)+(s.unanswered||0);
+      const missRate=s.seen?Math.round((missed/s.seen)*100):0;
+      return {id,category:s.category,seen:s.seen,missed,missRate};
+    })
+    .sort((a,b)=>b.missRate-a.missRate || b.missed-a.missed)
+    .slice(0,10);
+
+  let missedRows = "";
+  if(!missedSorted.length){
+    missedRows = "<tr><td colspan='5'>No question-level data yet.</td></tr>";
+  }else{
+    missedSorted.forEach(q=>{
+      missedRows += "<tr><td>"+escapeHtml(q.id)+"</td><td>"+escapeHtml(q.category)+"</td><td>"+q.seen+"</td><td>"+q.missed+"</td><td>"+q.missRate+"%</td></tr>";
+    });
+  }
+
+  const safeTitle = escapeHtml(TEST_CONFIG.state + " " + TEST_CONFIG.licenseType + " Beta Report");
+
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>${safeTitle}</title>
+<style>
+  body{font-family:Arial,Helvetica,sans-serif;line-height:1.45;color:#1f2933;background:#f4f7fb;margin:0;padding:24px}
+  .report{max-width:900px;margin:0 auto;background:white;border:1px solid #d9e2ec;border-radius:14px;padding:28px;box-shadow:0 2px 10px rgba(0,0,0,.08)}
+  h1{margin-top:0;color:#1f4e79}
+  h2{border-bottom:2px solid #f4c542;padding-bottom:6px;margin-top:28px}
+  table{width:100%;border-collapse:collapse;margin:12px 0}
+  th,td{border:1px solid #d9e2ec;padding:8px;text-align:left}
+  th{background:#eef3f8}
+  .summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px}
+  .card{background:#f4f7fb;border:1px solid #d9e2ec;border-radius:10px;padding:10px}
+  textarea{width:100%;min-height:82px;border:1px solid #b8c4d4;border-radius:10px;padding:10px;font-family:Arial,Helvetica,sans-serif;font-size:1rem;resize:vertical;background:#fff}
+  .short-textarea{min-height:52px}
+  .question-block{margin-bottom:18px}
+  .scale{display:flex;gap:12px;flex-wrap:wrap;margin:8px 0 10px}
+  .scale label{background:#f4f7fb;border:1px solid #d9e2ec;border-radius:999px;padding:7px 10px}
+  .instructions{background:#fff8dc;border:1px solid #ead27c;border-radius:12px;padding:14px}
+  .print-btn{background:#f4c542;border:0;border-radius:8px;padding:10px 14px;font-weight:700;cursor:pointer}
+  .note{color:#555;font-size:.95rem}
+  .top-note{background:#eaf2ff;border-left:6px solid #1f4e79;border-radius:10px;padding:12px;margin:14px 0}
+  @media print{body .mode-switcher,body .mode-switcher-panel,body #modeSwitcher,body #devModeSwitcher{display:none!important}
+    body{background:white;padding:0}
+    .report{box-shadow:none;border:0}
+    .no-print{display:none!important}
+    textarea{border:1px solid #999;min-height:95px}
+    .scale label{border:1px solid #999}
+  }
+</style>
+</head>
+<body>
+<div class="report">
+  <div class="no-print">
+    <button class="print-btn" onclick="window.print()">Print / Save as PDF</button>
+    <p class="note">Please answer the feedback questions first. Estimated time: 3–5 minutes. This button stays here for convenience; instructions are also included below.</p>
+  </div>
+
+  <h1>RoadReady Beta Feedback Report</h1>
+  <p><b>Beta ID:</b> ${escapeHtml(getBetaId() || "Not set")}<br>
+  <b>Internal Tester ID:</b> ${escapeHtml(p.testerId || getTesterId())}<br>
+  <b>Report Generated:</b> ${escapeHtml(new Date().toLocaleString())}<br>
+  <b>Module:</b> ${escapeHtml(TEST_CONFIG.state)} — ${escapeHtml(TEST_CONFIG.licenseType)}<br>
+  <b>Module Version:</b> ${escapeHtml(TEST_CONFIG.version)}<br>
+  <b>Engine Version:</b> ${escapeHtml(ENGINE_VERSION)}</p>
+
+  <div class="top-note">
+    <b>Beta tester task:</b> Confirm your Beta ID is shown above, answer the questions below, then save this report as a PDF and return it to the person who gave you the beta test.
+  </div>
+
+  <h2>Feedback Questions</h2>
+
+  <div class="question-block">
+    <p><b>1. How easy was the program to use?</b></p>
+    <div class="scale">
+      <label><input type="radio" name="ease"> Very Difficult</label>
+      <label><input type="radio" name="ease"> Difficult</label>
+      <label><input type="radio" name="ease"> Neutral</label>
+      <label><input type="radio" name="ease"> Easy</label>
+      <label><input type="radio" name="ease"> Very Easy</label>
+    </div>
+    <textarea class="short-textarea" placeholder="Optional comments..."></textarea>
+  </div>
+
+  <div class="question-block"><p><b>2. Were any questions confusing? If yes, list the question number, topic, or wording.</b></p><textarea></textarea></div>
+  <div class="question-block"><p><b>3. Did you notice any answers you believe were incorrect?</b></p><textarea></textarea></div>
+  <div class="question-block"><p><b>4. Did anything crash, freeze, fail to save, or behave strangely?</b></p><textarea></textarea></div>
+
+  <div class="question-block">
+    <p><b>5. Did the explanations help you understand why answers were correct?</b></p>
+    <div class="scale">
+      <label><input type="radio" name="explanations"> Yes</label>
+      <label><input type="radio" name="explanations"> Somewhat</label>
+      <label><input type="radio" name="explanations"> No</label>
+      <label><input type="radio" name="explanations"> Not Sure</label>
+    </div>
+    <textarea class="short-textarea" placeholder="Optional comments..."></textarea>
+  </div>
+
+  <div class="question-block"><p><b>6. What did you like most?</b></p><textarea></textarea></div>
+  <div class="question-block"><p><b>7. What would you improve or change?</b></p><textarea></textarea></div>
+
+  <div class="question-block">
+    <p><b>8. Based on your experience so far, how likely would you be to recommend RoadReady to someone studying for their permit?</b></p>
+    <div class="scale">
+      <label><input type="radio" name="recommend"> Definitely</label>
+      <label><input type="radio" name="recommend"> Probably</label>
+      <label><input type="radio" name="recommend"> Not Sure</label>
+      <label><input type="radio" name="recommend"> Probably Not</label>
+      <label><input type="radio" name="recommend"> Definitely Not</label>
+    </div>
+    <textarea class="short-textarea" placeholder="Why or why not?"></textarea>
+  </div>
+
+  <div class="question-block">
+    <p><b>9. Would you be willing to test future versions?</b></p>
+    <div class="scale">
+      <label><input type="radio" name="future"> Yes</label>
+      <label><input type="radio" name="future"> No</label>
+      <label><input type="radio" name="future"> Maybe</label>
+    </div>
+    <textarea class="short-textarea" placeholder="Optional contact info or notes, if you want to provide them..."></textarea>
+  </div>
+
+  <div class="question-block">
+    <p><b>10. Did the program repeat the same questions too often?</b></p>
+    <div class="scale">
+      <label><input type="radio" name="repeat"> Never</label>
+      <label><input type="radio" name="repeat"> Rarely</label>
+      <label><input type="radio" name="repeat"> Sometimes</label>
+      <label><input type="radio" name="repeat"> Frequently</label>
+    </div>
+    <textarea class="short-textarea" placeholder="Comments..."></textarea>
+  </div>
+
+  <div class="question-block">
+    <p><b>11. Were there any topics you felt were not covered enough?</b></p>
+    <textarea></textarea>
+  </div>
+
+  <h2>Returning Your Report</h2>
+  <div class="instructions">
+    <p><b>Thank you for helping test RoadReady.</b></p>
+    <p><b>Step 1:</b> Make sure the feedback questions above are completed.</p>
+    <p><b>Step 2:</b> Save this report as a PDF.</p>
+    <ul>
+      <li><b>Chrome / Microsoft Edge:</b> Press <b>Ctrl + P</b>, choose <b>Save as PDF</b>, then click <b>Save</b>.</li>
+      <li><b>Mac:</b> Press <b>Command + P</b>, then choose <b>Save as PDF</b>.</li>
+    </ul>
+    <p><b>Step 3:</b> Return the completed PDF to the person who provided this beta test.</p>
+    <p><b>Step 4:</b> Thank you for helping improve RoadReady.</p>
+  </div>
+
+  <h2>Automatically Collected Statistics</h2>
+
+  <h3>Overall Summary</h3>
+  <div class="summary">
+    <div class="card"><b>Tests Taken</b><br>${p.totalTests}</div>
+    <div class="card"><b>Best Score</b><br>${p.bestScore} / ${TEST_CONFIG.totalQuestions}</div>
+    <div class="card"><b>Average Score</b><br>${averageScore} / ${TEST_CONFIG.totalQuestions}</div>
+    <div class="card"><b>Passed</b><br>${p.passedTests}</div>
+    <div class="card"><b>Needs Review</b><br>${p.failedTests}</div>
+    <div class="card"><b>Pass Rate</b><br>${passRate}%</div>
+    <div class="card"><b>Overall Accuracy</b><br>${average}%</div>
+    <div class="card"><b>Total Questions Seen</b><br>${p.totalQuestionsAnswered}</div>
+    <div class="card"><b>Total Correct</b><br>${p.totalCorrectAnswers}</div>
+    <div class="card"><b>Total Wrong</b><br>${totalWrong}</div>
+    <div class="card"><b>Total Unanswered</b><br>${p.totalUnanswered || 0}</div>
+  </div>
+
+  <h3>Time Statistics</h3>
+  <div class="summary">
+    <div class="card"><b>Total Study Time</b><br>${formatDuration(ts.totalStudySeconds || 0)}</div>
+    <div class="card"><b>Average Test Time</b><br>${formatDuration(avgTestTime)}</div>
+    <div class="card"><b>Fastest Completed Test</b><br>${ts.fastestTestSeconds==null?"—":formatDuration(ts.fastestTestSeconds)}</div>
+    <div class="card"><b>Longest Completed Test</b><br>${formatDuration(ts.longestTestSeconds || 0)}</div>
+    <div class="card"><b>Average Time / Question</b><br>${formatDuration(avgQuestionTime)}</div>
+    <div class="card"><b>Avg Correct Answer Time</b><br>${formatDuration(avgCorrectTime)}</div>
+    <div class="card"><b>Avg Wrong Answer Time</b><br>${formatDuration(avgWrongTime)}</div>
+    <div class="card"><b>Timed Questions Answered</b><br>${ts.totalQuestionsAnswered || 0}</div>
+  </div>
+
+  <h3>Milestones</h3>
+  <div class="summary">
+    <div class="card"><b>Current Passing Streak</b><br>${p.currentPassStreak || 0}</div>
+    <div class="card"><b>Longest Passing Streak</b><br>${p.longestPassStreak || 0}</div>
+    <div class="card"><b>Perfect Tests</b><br>${p.perfectTests || 0}</div>
+    <div class="card"><b>Total Questions Seen</b><br>${p.totalQuestionsAnswered}</div>
+  </div>
+
+  <h3>Category Performance</h3>
+  <table>
+    <thead><tr><th>Category</th><th>Accuracy</th><th>Seen</th><th>Correct</th><th>Wrong</th><th>Unanswered</th></tr></thead>
+    <tbody>${categoryRows}</tbody>
+  </table>
+
+  <h3>Last 10 Attempts</h3>
+  <ol>${attempts}</ol>
+
+  ${olderSummaryHtml}
+
+  <h3>Question Bank Usage Analytics</h3>
+  <div class="summary">
+    <div class="card"><b>Questions Available</b><br>${QUESTION_BANK.length}</div>
+    <div class="card"><b>Questions Seen</b><br>${seenQuestions}</div>
+    <div class="card"><b>Questions Not Yet Seen</b><br>${neverSeen.length}</div>
+    <div class="card"><b>Most Seen Question</b><br>${escapeHtml(mostSeen)}</div>
+    <div class="card"><b>Least Seen Question</b><br>${escapeHtml(leastSeen)}</div>
+  </div>
+
+  <h3>Most Missed Questions</h3>
+  <table>
+    <thead><tr><th>Question ID</th><th>Category</th><th>Seen</th><th>Missed</th><th>Miss Rate</th></tr></thead>
+    <tbody>${missedRows}</tbody>
+  </table>
+
+  <h3>Engine / Module Details</h3>
+  <div class="summary">
+    <div class="card"><b>Survey Version</b><br>${escapeHtml(BETA_CONFIG.surveyVersion || "1.0")}</div>
+    <div class="card"><b>Question Bank</b><br>${QUESTION_BANK.length} questions</div>
+    <div class="card"><b>Test Length</b><br>${TEST_CONFIG.totalQuestions} questions</div>
+    <div class="card"><b>Passing Score</b><br>${TEST_CONFIG.passingScore}</div>
+  </div>
+
+  <h3>Device / Browser</h3>
+  <p><b>Platform:</b> ${escapeHtml(info.platform)}<br>
+  <b>Language:</b> ${escapeHtml(info.language)}<br>
+  <b>Screen:</b> ${escapeHtml(info.screen)}<br>
+  <b>Viewport:</b> ${escapeHtml(info.viewport)}<br>
+  <b>User Agent:</b> ${escapeHtml(info.userAgent)}</p>
+</div>
+
+<div id="modeBadge" class="mode-badge">
+  <b>Mode: <span id="modeBadgeText"></span></b>
+  <button onclick="setActiveAppMode('developer')">Dev</button>
+  <button onclick="setActiveAppMode('beta')">Beta</button>
+  <button onclick="setActiveAppMode('public')">Public</button>
+  <button onclick="cycleActiveAppMode()">Cycle</button>
+  <div class="dev-small">F8 cycles modes<br>Ctrl+Alt+1/2/3 jumps modes</div>
+</div>
+<div id="modeToast" class="mode-toast"></div>
+
+</body>
+</html>`;
+}
+
+function generateBetaReport(){
+  const htmlReport = buildBetaReportHtml();
+  const blob = new Blob([htmlReport], {type:"text/html"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  const date = new Date().toISOString().slice(0,10);
+  a.href = url;
+  a.download = "RoadReady_Beta_Report_" + TEST_CONFIG.state.replace(/\s+/g,"_") + "_" + date + ".html";
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+
+  const p = loadProgress();
+  p.betaReportGenerated = true;
+  p.betaReportGeneratedAt = new Date().toLocaleString();
+  p.lastBetaReminderTest = p.totalTests;
+  saveProgress(p);
+}
+
+function showStatsScreen(){appHeader.classList.add("hidden");homeScreen.classList.add("hidden");testScreen.classList.add("hidden");developerScreen.style.display="none";const p=loadProgress(),avg=p.totalQuestionsAnswered?Math.round(p.totalCorrectAnswers/p.totalQuestionsAnswered*100):0;let best=null,worst=null;Object.keys(p.categoryStats).forEach(c=>{const s=p.categoryStats[c],pct=s.total?Math.round(s.right/s.total*100):0;if(!best||pct>best.pct)best={name:c,pct};if(!worst||pct<worst.pct)worst={name:c,pct}});let ch='<div class="summary-grid">',cats=Object.keys(p.categoryStats).sort();if(!cats.length)ch+='<div class="summary-item"><b>No category data yet</b><br>Take and grade a test first.</div>';else cats.forEach(c=>{const s=p.categoryStats[c],pct=s.total?Math.round(s.right/s.total*100):0;ch+='<div class="summary-item"><b>'+escapeHtml(c)+'</b><br>'+s.right+" / "+s.total+" correct<br>Wrong: "+(s.wrong||0)+"<br>Unanswered: "+(s.unanswered||0)+"<br>Missed Total: "+(s.missed||0)+"<br>"+pct+"%</div>"});ch+="</div>";let hh="";if(p.attemptHistory.length){hh="<h3>Recent Attempts</h3><ol>";p.attemptHistory.slice(-10).reverse().forEach(a=>{hh+="<li>"+escapeHtml(a.date)+" — "+a.score+"/"+a.total+" ("+a.percent+"%) "+a.result+" | Wrong: "+(a.wrong??(a.total-a.score-(a.unanswered||0)))+" | Unanswered: "+(a.unanswered||0)+"</li>"});hh+="</ol>"}let enc=p.totalTests?"<p><b>Strongest Area:</b> "+(best?escapeHtml(best.name)+" ("+best.pct+"%)":"N/A")+"<br><b>Weakest Area:</b> "+(worst?escapeHtml(worst.name)+" ("+worst.pct+"%)":"N/A")+"</p>":"";statsScreen.style.display="block";statsScreen.innerHTML=renderContextNav("stats")+"<h2>Statistics</h2><p><b>Tests Taken:</b> "+p.totalTests+"<br><b>Passed:</b> "+p.passedTests+"<br><b>Needs Review:</b> "+p.failedTests+"<br><b>Best Score:</b> "+p.bestScore+" / "+TEST_CONFIG.totalQuestions+"<br><b>Overall Accuracy:</b> "+avg+"%<br><b>Total Unanswered:</b> "+(p.totalUnanswered||0)+"<br><b>Tester ID:</b> "+escapeHtml(p.testerId||getTesterId())+"<br><b>Beta ID:</b> "+escapeHtml(getBetaId()||"Not set")+"</p>"+renderTimeStatsBlock(p)+((ACTIVE_APP_MODE==="beta"||ACTIVE_APP_MODE==="developer")&&p.totalTests>=BETA_CONFIG.feedbackAfterTests?"<div class=\"beta-report-banner\"><h3>Beta Feedback Report</h3><p>You can generate a report with your statistics and feedback questions.</p><button class=\"primary-btn\" onclick=\"generateBetaReport()\">Generate Beta Report</button></div>":"")+enc+"<h3>Category Performance</h3>"+ch+hh+'<div class="danger-zone"><h3>Danger Zone</h3><p><b>Reset Statistics</b> will permanently erase test history, scores, category statistics, and pass/fail records stored on this device/browser.</p><button onclick="showResetConfirm()">Reset Statistics</button><div class="reset-confirm" id="resetConfirm"><p>Type <b>RESET</b> to confirm:</p><input id="resetInput" type="text"> <button onclick="eraseStatistics()">Erase Statistics</button></div></div><p><button class="primary-btn" onclick="showHome()">Back to Home</button></p>';statsScreen.scrollIntoView({behavior:"smooth",block:"start"})}
+function showResetConfirm(){document.getElementById("resetConfirm").style.display="block"}function eraseStatistics(){const v=document.getElementById("resetInput").value.trim();if(v!=="RESET"){alert("Statistics were not erased. Type RESET exactly to confirm.");return}localStorage.removeItem(getStorageKey());alert("Statistics erased.");showStatsScreen()}
+applyModule();showHome();
+</script>
+<div id="modeBadge" class="mode-badge">
+  <b>Mode: <span id="modeBadgeText"></span></b>
+  <button onclick="setActiveAppMode('developer')">Dev</button>
+  <button onclick="setActiveAppMode('beta')">Beta</button>
+  <button onclick="setActiveAppMode('public')">Public</button>
+  <button onclick="cycleActiveAppMode()">Cycle</button>
+  <div class="dev-small">F8 cycles modes<br>Ctrl+Alt+1/2/3 jumps modes</div>
+</div>
+<div id="modeToast" class="mode-toast"></div>
+
+</body></html>
