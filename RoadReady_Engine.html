@@ -53,7 +53,7 @@
 <script>
 const APP_MODE="beta"; // options: "developer", "beta", "public"
 let ACTIVE_APP_MODE = localStorage.getItem("roadready_active_app_mode") || APP_MODE;
-const ENGINE_VERSION="1.6.4 Beta";
+const ENGINE_VERSION="1.6.5 Beta";
 const MODULE=window.ROADREADY_MODULE;if(!MODULE){alert("RoadReady module not found. Check the module script path.")}const TEST_CONFIG=MODULE.testConfig,THEME_CONFIG=MODULE.themeConfig,EXAM_BLUEPRINT=MODULE.examBlueprint,QUESTION_BANK=MODULE.questionBank;
 const BETA_CONFIG = MODULE.betaConfig || { feedbackAfterTests: 5, remindEvery: 5, surveyVersion: "1.0" };
 let currentQuestions=[],missedQuestions=new Set();
@@ -426,6 +426,8 @@ const RoadReadyNav = {
       buildQuestionSet();
       renderQuestions();
       updateProgress();
+      scoreBox.innerHTML = "";
+      scoreBox.classList.add("hidden");
       showTestScreen();
       beginTestTimer();
       window.scrollTo(0,0);
@@ -760,6 +762,7 @@ const progressForPrompt=loadProgress();
 if(shouldPromptBetaReport(progressForPrompt)){
 betaBanner="<div class='beta-report-banner'><h3>⭐ Beta Feedback Requested</h3><p>You have completed "+progressForPrompt.totalTests+" practice test(s). Please generate a beta feedback report and send it back to the project owner.</p><button class='primary-btn' onclick='generateBetaReport()'>Complete & Share Beta Report</button> <button class='secondary-btn' onclick='dismissBetaReportPrompt()'>Remind Me Later</button></div>";
 }
+scoreBox.classList.remove("hidden");
 scoreBox.innerHTML="<h2>Score: "+score+" / "+total+" ("+percent+"%) - "+status+"</h2><p><b>Correct:</b> "+score+" out of "+total+"<br><b>Wrong:</b> "+wrong+"<br><b>Unanswered:</b> "+unanswered+"</p><p>"+msg+"</p>"+betaBanner+"<h3>Category Review</h3>"+summary;
 reviewBtn.style.display=missedQuestions.size?"inline-block":"none";
 document.querySelectorAll(".question").forEach(q=>q.style.display="block");
