@@ -59,7 +59,7 @@
 <script>
 const APP_MODE="beta"; // options: "developer", "beta", "public"
 let ACTIVE_APP_MODE = localStorage.getItem("roadready_active_app_mode") || APP_MODE;
-const ENGINE_VERSION="1.9.0 Beta";
+const ENGINE_VERSION="1.9.1 Beta";
 let MODULE=window.ROADREADY_MODULE;if(!MODULE){alert("RoadReady module not found. Check the module script path.")}
 let TEST_CONFIG=MODULE.testConfig,THEME_CONFIG=MODULE.themeConfig,EXAM_BLUEPRINT=MODULE.examBlueprint,QUESTION_BANK=MODULE.questionBank;
 let BETA_CONFIG = MODULE.betaConfig || { feedbackAfterTests: 5, remindEvery: 5, surveyVersion: "1.0" };
@@ -562,10 +562,11 @@ function showHome(){
   if(actions){
     actions.innerHTML = "";
     const capabilities=getModuleCapabilities();
-    if(capabilities.practiceTests){const startBtn=document.createElement("button");startBtn.className="primary-btn";startBtn.textContent="Start Practice Test";startBtn.onclick=function(){RoadReadyNav.startNewTest()};actions.appendChild(startBtn)}
+    if(capabilities.lessons){const b=document.createElement("button");b.className="primary-btn";b.textContent="Lessons";b.onclick=showLessons;actions.appendChild(b)}
+    else if(capabilities.practiceTests){const startBtn=document.createElement("button");startBtn.className="primary-btn";startBtn.textContent="Start Practice Test";startBtn.onclick=function(){RoadReadyNav.startNewTest()};actions.appendChild(startBtn)}
     if(capabilities.study){const studyBtn=document.createElement("button");studyBtn.className="secondary-btn";studyBtn.textContent="Study Mode";studyBtn.onclick=function(){showStudyMode()};actions.appendChild(studyBtn)}
     if(capabilities.flashcards){const flashBtn=document.createElement("button");flashBtn.className="secondary-btn";flashBtn.textContent="Flashcards";flashBtn.onclick=function(){showFlashcards()};actions.appendChild(flashBtn)}
-    if(capabilities.lessons){const b=document.createElement("button");b.className="secondary-btn";b.textContent="Lessons";b.onclick=showLessons;actions.appendChild(b)}
+    if(capabilities.lessons&&capabilities.practiceTests){const startBtn=document.createElement("button");startBtn.className="secondary-btn";startBtn.textContent="Start Practice Test";startBtn.onclick=function(){RoadReadyNav.startNewTest()};actions.appendChild(startBtn)}
     if(capabilities.reference){const b=document.createElement("button");b.className="secondary-btn";b.textContent="Reference";b.onclick=showReferenceLibrary;actions.appendChild(b)}
     if(capabilities.search){const b=document.createElement("button");b.className="secondary-btn";b.textContent="Search";b.onclick=showGlobalSearch;actions.appendChild(b)}
 
