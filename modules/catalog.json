@@ -1,5 +1,5 @@
 {
-  "catalogVersion": "1.0",
+  "catalogVersion": "1.1",
   "modules": [
     {
       "moduleId": "wv-driver",
@@ -10,6 +10,16 @@
       "questionCount": 292,
       "bundled": true,
       "file": "wv_driver_module.json"
+    },
+    {
+      "moduleId": "christianity-basics-asv",
+      "title": "Christianity Basics",
+      "version": "Christianity Basics v2.3",
+      "icon": "✝",
+      "description": "A Bible-first introduction to Christianity with embedded ASV Scripture readings, lessons, quizzes, flashcards, study questions, and reference material.",
+      "questionCount": 40,
+      "bundled": false,
+      "file": "christianity_basics_module.json"
     }
   ]
 }
