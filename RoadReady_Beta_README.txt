@@ -1,4 +1,4 @@
-RoadReady Beta v1.9.1
+RoadReady Beta v1.9.3
 
 GitHub Pages files:
 - index.html
@@ -16,6 +16,8 @@ Phase Two learning platform features:
 - Question and answer-choice images
 - Module capability declarations
 - Lessons-first home screen for modules that include lessons
+- Correct recent-question history lookup for the smart test randomizer
+- Randomized lesson-quiz question and answer order on every attempt
 
 Hidden mode controls:
 - Desktop: F8 cycles Developer, Beta, and Public
