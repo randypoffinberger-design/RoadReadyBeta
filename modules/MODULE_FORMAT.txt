@@ -1,34 +1,72 @@
-ROADREADY PHASE ONE MODULE FORMAT
+ROADREADY PHASE TWO MODULE FORMAT
 
-A module can declare these capabilities:
+A module may declare these capabilities:
 
 "capabilities": {
   "practiceTests": true,
   "study": true,
   "flashcards": true,
-  "images": true
+  "images": true,
+  "lessons": true,
+  "chapterQuizzes": true,
+  "reference": true,
+  "search": true
 }
 
-RoadReady hides a mode when its capability is false. For older modules without a capabilities block, practice tests, study mode, and flashcards are enabled automatically when a questionBank exists. Image support turns on automatically when an image is found.
+RoadReady only shows a feature when the module contains the required content. Older question-bank modules continue to support tests, Study Mode, and Flashcards automatically.
 
-QUESTION IMAGES
-Add an image to a question using either a URL string:
-"image": "modules/images/sign.png"
+LESSONS
+Add a top-level lessons array:
 
-or an object:
-"image": {
-  "src": "modules/images/sign.png",
-  "alt": "Red octagonal stop sign",
-  "caption": "A standard stop sign"
-}
+"lessons": [
+  {
+    "id": "lesson-1",
+    "chapter": "Chapter 1",
+    "title": "Introduction",
+    "summary": "Shown on the lesson list.",
+    "content": "Full lesson text. Blank lines create paragraphs.",
+    "image": "modules/images/example.png",
+    "quizQuestionIds": ["SAMPLE-001", "SAMPLE-002"],
+    "passingScore": 2
+  }
+]
 
-ANSWER-CHOICE IMAGES
-Add image to a choice:
-{"text":"Stop sign", "correct":true, "image":"modules/images/stop.png"}
+A lesson can use either content or sections:
 
-Images may use a normal relative URL, an HTTPS URL, or a data:image URL. A locally imported JSON file cannot carry separate image files by itself, so use hosted URLs, data:image values, or install the module and its image folder together through GitHub.
+"sections": [
+  {"heading":"Topic One", "content":"Text for this topic."},
+  {"heading":"Topic Two", "content":"Text for this topic."}
+]
+
+LESSON QUIZZES
+The easiest method is quizQuestionIds, which reuses questions from questionBank. A lesson can instead contain its own quiz array using the same question/choices/explanation structure as questionBank.
+
+REFERENCE LIBRARY
+Add a top-level referenceLibrary array:
+
+"referenceLibrary": [
+  {
+    "id": "ref-1",
+    "category": "Vocabulary",
+    "title": "Example Term",
+    "summary": "Short list description.",
+    "content": "Full searchable reference text.",
+    "tags": ["term", "definition"],
+    "image": "modules/images/example.png",
+    "source": "Optional source citation"
+  }
+]
+
+SEARCH
+Search works automatically across lesson titles and text, reference entries and tags, and all study questions and explanations. Set search to false only when the module should not expose search.
+
+MODULE REMOVAL
+Downloaded and locally imported modules can be removed from the Module Library. The built-in starter module cannot be removed. Removing a module keeps its statistics and lesson progress so they return if the same module is installed again.
+
+IMAGES
+Question, answer-choice, lesson, and reference images may use a relative URL, HTTPS URL, or data:image URL. Locally imported JSON cannot carry separate image files by itself, so use hosted URLs, data:image values, or publish the module and image folder together on GitHub.
 
 ONLINE CATALOG
-Add optional modules to modules/catalog.json. Set bundled to false. The module is only downloaded after the user taps Download Module.
+Add optional modules to modules/catalog.json with bundled set to false. They are downloaded only after the user taps Download Module.
 
-See module-template.json for a working starting structure.
+See module-template.json for a working Phase Two example.

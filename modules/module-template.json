@@ -5,13 +5,17 @@
     "licenseType": "Learning Module",
     "moduleVersion": "1.0",
     "questionCount": 2,
-    "notes": "RoadReady Phase One module template"
+    "notes": "RoadReady Phase Two module template"
   },
   "capabilities": {
     "practiceTests": true,
     "study": true,
     "flashcards": true,
-    "images": true
+    "images": true,
+    "lessons": true,
+    "chapterQuizzes": true,
+    "reference": true,
+    "search": true
   },
   "testConfig": {
     "title": "Sample Learning Module",
@@ -47,10 +51,22 @@
         "caption": "Optional caption"
       },
       "choices": [
-        {"text": "Correct answer", "correct": true},
-        {"text": "Wrong answer", "correct": false},
-        {"text": "Wrong answer", "correct": false},
-        {"text": "Wrong answer", "correct": false}
+        {
+          "text": "Correct answer",
+          "correct": true
+        },
+        {
+          "text": "Wrong answer",
+          "correct": false
+        },
+        {
+          "text": "Wrong answer",
+          "correct": false
+        },
+        {
+          "text": "Wrong answer",
+          "correct": false
+        }
       ],
       "explanation": "Explain why the correct answer is right."
     },
@@ -59,12 +75,68 @@
       "category": "Basics",
       "question": "Images can also be attached to an answer choice.",
       "choices": [
-        {"text": "Image answer", "correct": true, "image": "https://example.com/answer-image.png"},
-        {"text": "Wrong answer", "correct": false},
-        {"text": "Wrong answer", "correct": false},
-        {"text": "Wrong answer", "correct": false}
+        {
+          "text": "Image answer",
+          "correct": true,
+          "image": "https://example.com/answer-image.png"
+        },
+        {
+          "text": "Wrong answer",
+          "correct": false
+        },
+        {
+          "text": "Wrong answer",
+          "correct": false
+        },
+        {
+          "text": "Wrong answer",
+          "correct": false
+        }
       ],
       "explanation": "Choice images appear in tests and study mode; the correct choice image appears on the flashcard answer."
+    }
+  ],
+  "lessons": [
+    {
+      "id": "lesson-1",
+      "chapter": "Chapter 1",
+      "title": "Introduction",
+      "summary": "A sample lesson showing the Phase Two lesson format.",
+      "content": "This is the main lesson text. Separate paragraphs with a blank line. Lessons can include an optional image and can link existing questions into a lesson quiz.",
+      "quizQuestionIds": [
+        "SAMPLE-001"
+      ],
+      "passingScore": 1
+    },
+    {
+      "id": "lesson-2",
+      "chapter": "Chapter 2",
+      "title": "A Lesson Without a Quiz",
+      "summary": "Lessons may also be completed without a quiz.",
+      "sections": [
+        {
+          "heading": "First Topic",
+          "content": "Section-based lessons may contain several titled topics."
+        },
+        {
+          "heading": "Second Topic",
+          "content": "The learner can mark the lesson complete after reading it."
+        }
+      ]
+    }
+  ],
+  "referenceLibrary": [
+    {
+      "id": "ref-1",
+      "category": "Basics",
+      "title": "Sample Reference Topic",
+      "summary": "A short description shown in the reference library.",
+      "content": "This is searchable reference material. Use it for definitions, tables, rules, vocabulary, or material learners may need to look up quickly.",
+      "tags": [
+        "sample",
+        "basics"
+      ],
+      "source": "Optional public source citation"
     }
   ]
 }
