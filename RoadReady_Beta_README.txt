@@ -1,4 +1,4 @@
-RoadReady Beta v1.8.0
+RoadReady Beta v1.9.0
 
 GitHub Pages files:
 - index.html
@@ -6,7 +6,7 @@ GitHub Pages files:
 - modules/wv_driver_module.js
 - modules/catalog.json
 
-Phase One learning platform features:
+Phase Two learning platform features:
 - Selectable installed modules
 - Local JSON module import
 - Optional online module catalog/download
