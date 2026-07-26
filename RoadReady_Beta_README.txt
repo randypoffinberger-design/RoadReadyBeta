@@ -1,13 +1,24 @@
+RoadReady Beta v1.8.0
 
-RoadReady Engine v1.7.0 Beta additions:
-- Module Library screen for selecting installed modules.
-- JSON module import stored in the current browser/device.
-- Study Mode with category filtering, shuffled questions, answer reveal, explanations, and handbook references when available.
-- Existing practice-test, statistics, beta, developer, F8, and mobile seven-tap mode controls remain available.
+GitHub Pages files:
+- index.html
+- RoadReady_Engine.html
+- modules/wv_driver_module.js
+- modules/catalog.json
 
-OPTIONAL ONLINE MODULES
------------------------
-The West Virginia driver module is bundled as the starter module.
-Other modules should NOT be linked with a script tag in index.html.
-Publish each optional module as JSON inside modules/ and add one entry to modules/catalog.json.
-RoadReady will list those modules only when the user taps Browse Online Modules, and it downloads a module only after the user taps Download Module.
+Phase One learning platform features:
+- Selectable installed modules
+- Local JSON module import
+- Optional online module catalog/download
+- Practice tests
+- Study mode
+- Flashcards with Known/Unknown review
+- Question and answer-choice images
+- Module capability declarations
+
+Hidden mode controls:
+- Desktop: F8 cycles Developer, Beta, and Public
+- Desktop: Ctrl+Alt+1/2/3 selects a mode directly
+- Mobile: tap the RoadReady title or icon seven times
+
+Optional modules are not downloaded automatically. Add their JSON files to the modules folder and list them in modules/catalog.json.
