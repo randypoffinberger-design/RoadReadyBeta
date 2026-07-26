@@ -1,0 +1,15 @@
+{
+  "catalogVersion": "1.0",
+  "modules": [
+    {
+      "moduleId": "wv-driver",
+      "title": "West Virginia Driver Practice Test",
+      "version": "WV Driver Module v1.2",
+      "icon": "🚗",
+      "description": "Built-in West Virginia driver's license learning module.",
+      "questionCount": 292,
+      "bundled": true,
+      "file": "wv_driver_module.json"
+    }
+  ]
+}
