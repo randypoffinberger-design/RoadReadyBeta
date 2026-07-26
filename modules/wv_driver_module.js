@@ -10,6 +10,12 @@ window.ROADREADY_MODULE = {
     "questionCount": 292,
     "notes": "Expanded RoadReady West Virginia Driver module with additional scenario-based and handbook-based practice questions."
   },
+  "capabilities": {
+    "practiceTests": true,
+    "study": true,
+    "flashcards": true,
+    "images": false
+  },
   "testConfig": {
     "title": "West Virginia Driver Practice Test",
     "subtitle": "RoadReady Engine \u2022 WV Driver Module v1.2",

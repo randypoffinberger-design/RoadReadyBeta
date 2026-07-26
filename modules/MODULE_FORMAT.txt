@@ -1,0 +1,34 @@
+ROADREADY PHASE ONE MODULE FORMAT
+
+A module can declare these capabilities:
+
+"capabilities": {
+  "practiceTests": true,
+  "study": true,
+  "flashcards": true,
+  "images": true
+}
+
+RoadReady hides a mode when its capability is false. For older modules without a capabilities block, practice tests, study mode, and flashcards are enabled automatically when a questionBank exists. Image support turns on automatically when an image is found.
+
+QUESTION IMAGES
+Add an image to a question using either a URL string:
+"image": "modules/images/sign.png"
+
+or an object:
+"image": {
+  "src": "modules/images/sign.png",
+  "alt": "Red octagonal stop sign",
+  "caption": "A standard stop sign"
+}
+
+ANSWER-CHOICE IMAGES
+Add image to a choice:
+{"text":"Stop sign", "correct":true, "image":"modules/images/stop.png"}
+
+Images may use a normal relative URL, an HTTPS URL, or a data:image URL. A locally imported JSON file cannot carry separate image files by itself, so use hosted URLs, data:image values, or install the module and its image folder together through GitHub.
+
+ONLINE CATALOG
+Add optional modules to modules/catalog.json. Set bundled to false. The module is only downloaded after the user taps Download Module.
+
+See module-template.json for a working starting structure.

@@ -1,0 +1,70 @@
+{
+  "moduleInfo": {
+    "moduleId": "sample_learning_module",
+    "state": "General",
+    "licenseType": "Learning Module",
+    "moduleVersion": "1.0",
+    "questionCount": 2,
+    "notes": "RoadReady Phase One module template"
+  },
+  "capabilities": {
+    "practiceTests": true,
+    "study": true,
+    "flashcards": true,
+    "images": true
+  },
+  "testConfig": {
+    "title": "Sample Learning Module",
+    "subtitle": "RoadReady Learning Platform",
+    "state": "General",
+    "licenseType": "Learning Module",
+    "version": "Sample Module v1.0",
+    "totalQuestions": 2,
+    "passingScore": 2,
+    "betaNotice": "Beta module.",
+    "disclaimer": "For study purposes.",
+    "storageKey": "roadready_sample_module_progress"
+  },
+  "themeConfig": {
+    "icon": "📘",
+    "accentColor": "#1f4e79",
+    "secondaryColor": "#f4c542",
+    "homeTitle": "Sample Learning Module",
+    "homeSubtitle": "Practice, study, and review flashcards.",
+    "topTip": "<b>Study Tip:</b> Reveal the explanation after choosing your answer."
+  },
+  "examBlueprint": {
+    "Basics": 2
+  },
+  "questionBank": [
+    {
+      "id": "SAMPLE-001",
+      "category": "Basics",
+      "question": "Which answer is correct?",
+      "image": {
+        "src": "https://example.com/question-image.png",
+        "alt": "Description for screen readers",
+        "caption": "Optional caption"
+      },
+      "choices": [
+        {"text": "Correct answer", "correct": true},
+        {"text": "Wrong answer", "correct": false},
+        {"text": "Wrong answer", "correct": false},
+        {"text": "Wrong answer", "correct": false}
+      ],
+      "explanation": "Explain why the correct answer is right."
+    },
+    {
+      "id": "SAMPLE-002",
+      "category": "Basics",
+      "question": "Images can also be attached to an answer choice.",
+      "choices": [
+        {"text": "Image answer", "correct": true, "image": "https://example.com/answer-image.png"},
+        {"text": "Wrong answer", "correct": false},
+        {"text": "Wrong answer", "correct": false},
+        {"text": "Wrong answer", "correct": false}
+      ],
+      "explanation": "Choice images appear in tests and study mode; the correct choice image appears on the flashcard answer."
+    }
+  ]
+}
